@@ -1,0 +1,6 @@
+{
+    "name": "crystlbrd/databasehandler",
+    "description": "A simple abstraction layer for database manipulation",
+    "type": "library",
+    "require": {}
+}
