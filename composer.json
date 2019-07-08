@@ -2,5 +2,18 @@
     "name": "crystlbrd/databasehandler",
     "description": "A simple abstraction layer for database manipulation",
     "type": "library",
-    "require": {}
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "crystlbrd\\DatabaseHandler\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "crystlbrd\\DatabaseHandler\\Tests\\": "tests/"
+        }
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^8.2"
+    }
 }
