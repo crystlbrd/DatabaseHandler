@@ -8,7 +8,7 @@ use crystlbrd\DatabaseHandler\Exceptions\TableException;
 
 class DatabaseHandler
 {
-    use Logger;
+    use LoggerTrait;
 
     // Reporting Levels
 

@@ -5,14 +5,14 @@ namespace crystlbrd\DatabaseHandler\Connections;
 use crystlbrd\DatabaseHandler\DatabaseHandler;
 use crystlbrd\DatabaseHandler\Exceptions\ConnectionException;
 use crystlbrd\DatabaseHandler\IConnection;
-use crystlbrd\DatabaseHandler\Logger;
+use crystlbrd\DatabaseHandler\LoggerTrait;
 use crystlbrd\DatabaseHandler\RowList;
 use PDO;
 use PDOException;
 
 class MySQLConnection implements IConnection
 {
-    use Logger;
+    use LoggerTrait;
 
     /**
      * @var string host
