@@ -5,17 +5,13 @@ namespace crystlbrd\DatabaseHandler;
 use crystlbrd\DatabaseHandler\Exceptions\ConnectionException;
 use crystlbrd\DatabaseHandler\Exceptions\DatabaseHandlerException;
 use crystlbrd\DatabaseHandler\Exceptions\TableException;
+use crystlbrd\Exceptionist\Environment;
+use crystlbrd\Exceptionist\ExceptionistTrait;
+use Exception;
 
 class DatabaseHandler
 {
-    use LoggerTrait;
-
-    // Reporting Levels
-
-    const E_REPORTING_DEBUG = 0;
-    const E_REPORTING_INFO = 1;
-    const E_REPORTING_WARNINGS = 2;
-    const E_REPORTING_ERRORS = 3;
+    use ExceptionistTrait;
 
     /**
      * @var array options
@@ -42,7 +38,7 @@ class DatabaseHandler
     {
         // load options
         $this->Options = array_merge($options, [
-            'reporting' => self::E_REPORTING_ERRORS
+            'reporting' => Environment::E_LEVEL_ERROR
         ]);
     }
 
@@ -107,11 +103,6 @@ class DatabaseHandler
         }
     }
 
-    /**
-     * @param string $table
-     * @throws DatabaseHandlerException
-     * @return Table
-     */
     public function load(string $table): Table
     {
         try {

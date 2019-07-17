@@ -3,7 +3,8 @@
     "description": "A simple abstraction layer for database manipulation",
     "type": "library",
     "require": {
-        "ext-pdo": "*"
+        "ext-pdo": "*",
+        "crystlbrd/exceptionist": "v1.1.0"
     },
     "autoload": {
         "psr-4": {

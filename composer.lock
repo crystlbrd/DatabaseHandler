@@ -4,8 +4,48 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a58d84e6453fbc2d457e0227e9667020",
-    "packages": [],
+    "content-hash": "f464aaa52aa3b9a0fe8e17b6ca89bb12",
+    "packages": [
+        {
+            "name": "crystlbrd/exceptionist",
+            "version": "v1.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/crystlbrd/Exceptionist.git",
+                "reference": "b7fb8a04f66a48898810f03e0713da292dd90727"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/crystlbrd/Exceptionist/zipball/b7fb8a04f66a48898810f03e0713da292dd90727",
+                "reference": "b7fb8a04f66a48898810f03e0713da292dd90727",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.3"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^8.2"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "crystlbrd\\Exceptionist\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Emanuel Bitkov",
+                    "email": "e.bitkov@hotmail.de"
+                }
+            ],
+            "description": "A slim exception and error logging tool",
+            "time": "2019-07-17T14:08:38+00:00"
+        }
+    ],
     "packages-dev": [
         {
             "name": "doctrine/instantiator",
