@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "eefbe036489cb51f62c9281495107050",
+    "content-hash": "aa1522bcc995d420d566d0f865563799",
     "packages": [
         {
             "name": "crystlbrd/exceptionist",
