@@ -82,6 +82,11 @@ class DatabaseHandler
         }
     }
 
+    public function getActiveConnection()
+    {
+        return $this->Connections[$this->ConnectionPointer];
+    }
+
     public function use(string $name): bool
     {
         // Connection defined?
@@ -107,7 +112,8 @@ class DatabaseHandler
     {
         try {
             // init the table
-            return new Table($this->Connections[$this->ConnectionPointer], $table);
+            return new Table($this->getActiveConnection(),
+                $table);
         } catch (TableException $e) {
             $this->log(new DatabaseHandlerException('Failed to load table ' . $table . '!', $e), 'error');
         }
