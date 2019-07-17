@@ -8,7 +8,7 @@ use crystlbrd\Exceptionist\Environment;
 use PDO;
 use PDOException;
 
-trait PdoConnection
+trait PDOConnection
 {
     /**
      * @var string host
@@ -179,6 +179,22 @@ trait PdoConnection
     {
         $this->Options[$option] = $value;
         return $this;
+    }
+
+    public function getCredentials($index = null)
+    {
+        $credentials = [
+            'host' => $this->Host,
+            'user' => $this->User,
+            'pass' => $this->Pass,
+            'name' => $this->Name
+        ];
+
+        if ($index != null && isset($credentials[$index])) {
+            return $credentials[$index];
+        } else {
+            return $credentials;
+        }
     }
 
     /**

@@ -4,6 +4,13 @@ namespace crystlbrd\DatabaseHandler;
 
 interface IConnection
 {
+
+    const JOIN_INNER = 1;
+    const JOIN_LEFT = 2;
+    const JOIN_RIGHT = 3;
+    const JOIN_FULL = 4;
+    const JOIN_CROSS = 5;
+
     /**
      * IConnection constructor.
      * @param string $host host
@@ -95,14 +102,21 @@ interface IConnection
     // Database manipulation
 
     /**
+     * Sends a SQL query to the database
+     * @param string $sql SQL query
+     * @return mixed received response
+     */
+    public function query(string $sql);
+
+    /**
      * Selects rows from a table
-     * @param string $table table name
+     * @param mixed $tables one or more table names
      * @param array $columns columns to select
      * @param array $conditions conditions
      * @param array $options additional options
      * @return RowList
      */
-    public function select(string $table, array $columns, array $conditions, array $options = []): RowList;
+    public function select($tables, array $columns = [], array $conditions = [], array $options = []): RowList;
 
     /**
      * Updates rows in a table

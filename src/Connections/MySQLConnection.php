@@ -2,18 +2,14 @@
 
 namespace crystlbrd\DatabaseHandler\Connections;
 
-use crystlbrd\DatabaseHandler\Drivers\MysqlPdoDriver;
+use crystlbrd\DatabaseHandler\Drivers\MySQLPDODriver;
 use crystlbrd\DatabaseHandler\IConnection;
-use crystlbrd\Exceptionist\ExceptionistTrait;
 
 class MySQLConnection implements IConnection
 {
-    // Exceptionist for exception and error handling
-    use ExceptionistTrait;
-
-    // PDO connection
-    use PdoConnection;
+    // PDO Connection
+    use PDOConnection;
 
     // MySQL driver
-    use MysqlPdoDriver;
+    use MySQLPDODriver;
 }

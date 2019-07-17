@@ -2,4 +2,9 @@
 
 namespace crystlbrd\DatabaseHandler;
 
-class RowList {}
+class RowList
+{
+    public function __construct(IConnection $connection, $data)
+    {
+    }
+}
