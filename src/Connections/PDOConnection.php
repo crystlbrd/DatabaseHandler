@@ -556,6 +556,8 @@ abstract class PDOConnection implements IConnection
                 // set counter
                 $i = 0;
 
+                $sql .= ' ORDER BY ';
+
                 // parse every order condition
                 foreach ($options['order'] as $column => $type) {
                     // add trailing comma

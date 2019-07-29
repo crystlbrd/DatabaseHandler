@@ -174,4 +174,15 @@ class MySQLConnectionTest extends TestCase
 
         self::assertSame($expect, $this->Connection->getLastQuery());
     }
+
+    public function testOptionParsing()
+    {
+        $res = $this->Connection->select('table1', [], [], [
+            'order' => ['col1' => 'asc', 'col2' => 'desc'],
+            'group' => 'col3'
+        ]);
+
+        self::assertNotFalse($res);
+        self::assertSame('SELECT * FROM table1 GROUP BY col3 ORDER BY col1, col2 DESC', $this->Connection->getLastQuery());
+    }
 }
