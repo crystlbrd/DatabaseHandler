@@ -73,15 +73,15 @@ class MySQLConnectionTest extends TestCase
             'table1', [],
             [
                 'and' => [
-                    'col1' => 'value1',
-                    'col2' => 'value2',
-                    'col3' => ['val1', 'val2']
+                    'col1' => 'val1',
+                    'col2' => 'val2',
+                    'col3' => ['val3.1', 'val3.2']
                 ]
             ]
         );
 
         $this->assertNotFalse($res);
-        $this->assertSame('SELECT * FROM table1 WHERE col1 = "value1" AND col2 = "value2" AND col3 = "val1" AND col3 = "val2"', $this->Connection->getLastQuery());
+        $this->assertSame('SELECT * FROM table1 WHERE col1 = "val1" AND col2 = "val2" AND col3 = "val3.1" AND col3 = "val3.2"', $this->Connection->getLastQuery());
     }
 
     /**
@@ -94,16 +94,16 @@ class MySQLConnectionTest extends TestCase
             'table1', [],
             [
                 'or' => [
-                    'a' => 'b',
-                    'c' => 'd',
-                    ['e' => 'f', 'g' => 'h'],
-                    'i' => ['k', 'l']
+                    'col1' => 'val1',
+                    'col2' => 'val2',
+                    ['col3' => 'val3', 'col4' => 'val4'],
+                    'col5' => ['val5.1', 'val5.2']
                 ]
             ]
         );
 
         $this->assertNotFalse($res);
-        $this->assertSame('SELECT * FROM table1 WHERE a = "b" OR c = "d" OR e = "f" AND g = "h" OR i = "k" OR i = "l"', $this->Connection->getLastQuery());
+        $this->assertSame('SELECT * FROM table1 WHERE col1 = "val1" OR col2 = "val2" OR col3 = "val3" AND col4 = "val4" OR col5 = "val5.1" OR col5 = "val5.2"', $this->Connection->getLastQuery());
     }
 
     /**
