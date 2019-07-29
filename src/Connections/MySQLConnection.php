@@ -2,6 +2,7 @@
 
 namespace crystlbrd\DatabaseHandler\Connections;
 
+use crystlbrd\DatabaseHandler\Exceptions\ConnectionException;
 use crystlbrd\DatabaseHandler\RowList;
 use crystlbrd\Exceptionist\ExceptionistTrait;
 
@@ -16,7 +17,7 @@ class MySQLConnection extends PDOConnection
      * @param array $conditions conditions
      * @param array $options additional options
      * @return RowList
-     * @throws \crystlbrd\DatabaseHandler\Exceptions\ConnectionException
+     * @throws ConnectionException
      */
     public function select($tables, array $columns = [], array $conditions = [], array $options = []): RowList
     {
