@@ -16,6 +16,7 @@ class MySQLConnection extends PDOConnection
      * @param array $conditions conditions
      * @param array $options additional options
      * @return RowList
+     * @throws \crystlbrd\DatabaseHandler\Exceptions\ConnectionException
      */
     public function select($tables, array $columns = [], array $conditions = [], array $options = []): RowList
     {
