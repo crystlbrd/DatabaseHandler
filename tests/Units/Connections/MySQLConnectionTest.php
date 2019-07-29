@@ -106,6 +106,9 @@ class MySQLConnectionTest extends TestCase
         $this->assertSame('SELECT * FROM table1 WHERE a = "b" OR c = "d" OR e = "f" AND g = "h" OR i = "k" OR i = "l"', $this->Connection->getLastQuery());
     }
 
+    /**
+     * @small
+     */
     public function testSelectionWithMixedConditions()
     {
         // SELECT with AND and OR conditions
@@ -139,5 +142,36 @@ class MySQLConnectionTest extends TestCase
         $sql .= ' OR col8 = "val8.2"' . $and;
 
         $this->assertSame($sql, $this->Connection->getLastQuery());
+    }
+
+    public function testOperatorParsing()
+    {
+        // Select with different operators
+        $res = $this->Connection->select(
+            'table1', [],
+            [
+                'and' => [
+                    'col1' => 'val1',
+                    'col2' => ['> val2.1', '>{{val2.2}}'],
+                    'col3' => ['>= val3.1', '>={{val3.2}}'],
+                    'col4' => ['< val4.1', '<{{val4.2}}'],
+                    'col5' => ['<= val5.1', '<={{val5.2}}'],
+                    'col6' => ['~ val6.1', '~ {{val6.2}}'],
+                ]
+            ]
+        );
+
+        self::assertNotFalse($res);
+
+        $expect = 'SELECT * FROM table1 WHERE ';
+
+        $expect .= 'col1 = "val1"';
+        $expect .= ' AND col2 > "val2.1" AND col2 > "val2.2"';
+        $expect .= ' AND col3 >= "val3.1" AND col3 >= "val3.2"';
+        $expect .= ' AND col4 < "val4.1" AND col4 < "val4.2"';
+        $expect .= ' AND col5 <= "val5.1" AND col5 <= "val5.2"';
+        $expect .= ' AND col6 LIKE "val6.1" AND col6 LIKE "val6.2"';
+
+        self::assertSame($expect, $this->Connection->getLastQuery());
     }
 }

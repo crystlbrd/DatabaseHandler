@@ -305,6 +305,16 @@ abstract class PDOConnection implements IConnection
      */
     protected function parseValue(string $value): string
     {
+        // Try to detect complex syntax
+        $e = explode('{{', $value);
+        if (count($e) == 2) {
+            $op = $this->parseOperator(trim($e[0]));
+            if ($op) {
+                $val = str_replace(['{{', '}}'], '', $e[1]);
+                return $op . $this->bindParam($val);
+            }
+        }
+
         // Try to detect simple syntax
         $e = explode(' ', $value);
         if (count($e) > 1) {
@@ -312,16 +322,6 @@ abstract class PDOConnection implements IConnection
             if ($op) {
                 unset($e[0]);
                 $val = implode(' ', $e);
-                return $op . $this->bindParam($val);
-            }
-        }
-
-        // Try to detect complex syntax
-        $e = explode('{{', $value);
-        if (count($e) > 1) {
-            $op = $this->parseOperator($e[0]);
-            if ($op) {
-                $val = str_replace('}}', '', $e[1]);
                 return $op . $this->bindParam($val);
             }
         }
