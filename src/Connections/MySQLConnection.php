@@ -31,12 +31,12 @@ class MySQLConnection extends PDOConnection
 
         // WHERE
         if (!empty($conditions)) {
-            $sql .= ' WHERE ' . $this->parseConditions($conditions);
+            $sql .= ' WHERE ' . $this->parseConditions($conditions) . ' ';
         }
 
         // ADDITIONAL OPTIONS
         if (!empty($options)) {
-            $sql .= ' ' . $this->parseOptions($options);
+            $sql .= $this->parseOptions($options);
         }
 
         return new RowList($this, $this->execute($sql));

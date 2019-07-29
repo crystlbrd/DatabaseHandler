@@ -105,4 +105,39 @@ class MySQLConnectionTest extends TestCase
         $this->assertNotFalse($res);
         $this->assertSame('SELECT * FROM table1 WHERE a = "b" OR c = "d" OR e = "f" AND g = "h" OR i = "k" OR i = "l"', $this->Connection->getLastQuery());
     }
+
+    public function testSelectionWithMixedConditions()
+    {
+        // SELECT with AND and OR conditions
+        $res = $this->Connection->select(
+            'table1', [],
+            [
+                'and' => [
+                    'col1' => 'val1',
+                    'col2' => 'val2',
+                    'col3' => ['val3.1', 'val3.2']
+                ],
+                'or' => [
+                    'col4' => 'val4',
+                    'col5' => 'val5',
+                    ['col6' => 'val6', 'col7' => 'val7'],
+                    'col8' => ['val8.1', 'val8.2']
+                ]
+            ]
+        );
+
+        $this->assertNotFalse($res);
+
+        // Expected SQL
+        $sql = 'SELECT * FROM table1 WHERE ';
+        $and = ' AND col1 = "val1" AND col2 = "val2" AND col3 = "val3.1" AND col3 = "val3.2"';
+
+        $sql .= 'col4 = "val4"' . $and;
+        $sql .= ' OR col5 = "val5"' . $and;
+        $sql .= ' OR col6 = "val6" AND col7 = "val7"' . $and;
+        $sql .= ' OR col8 = "val8.1"' . $and;
+        $sql .= ' OR col8 = "val8.2"' . $and;
+
+        $this->assertSame($sql, $this->Connection->getLastQuery());
+    }
 }

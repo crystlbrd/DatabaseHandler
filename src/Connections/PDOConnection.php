@@ -461,12 +461,19 @@ abstract class PDOConnection implements IConnection
                     $ii = 0;
                     foreach ($value as $val) {
                         $sql .= ($ii != 0 ? ' OR ' : '') . $column . $this->parseValue($val);
+
+                        // append all AND conditions if any defined
+                        if (isset($conditions['and'])) {
+                            $sql .= $this->parseAndConditions($conditions['and'], false);
+                            $appended = true;
+                        }
+
                         $ii++;
                     }
                 }
 
                 // append all AND conditions if any defined
-                if (isset($conditions['and'])) {
+                if (isset($conditions['and']) && !isset($appended)) {
                     $sql .= $this->parseAndConditions($conditions['and'], false);
                 }
 
@@ -595,7 +602,7 @@ abstract class PDOConnection implements IConnection
                 $stm->bindValue($index, $value);
 
                 // Replace parameter placeholder for internal cache
-                $sql = str_replace($index, '"' . $value . '"', $sql);
+                $sql = str_replace(' ' . $index . ' ', ' "' . $value . '" ', $sql);
             }
 
             // reset parameter cache
@@ -603,7 +610,7 @@ abstract class PDOConnection implements IConnection
             $this->ParameterIndex = 1;
 
             // Save query to cache
-            $this->History[] = $sql;
+            $this->History[] = trim($sql);
 
             // execute statement
             if ($stm->execute()) {
