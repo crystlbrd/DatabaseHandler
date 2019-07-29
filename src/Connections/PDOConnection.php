@@ -5,11 +5,14 @@ namespace crystlbrd\DatabaseHandler\Connections;
 use crystlbrd\DatabaseHandler\Exceptions\ConnectionException;
 use crystlbrd\DatabaseHandler\IConnection;
 use crystlbrd\Exceptionist\Environment;
+use crystlbrd\Exceptionist\ExceptionistTrait;
 use PDO;
 use PDOException;
 
-trait PDOConnection
+abstract class PDOConnection implements IConnection
 {
+    use ExceptionistTrait;
+
     /**
      * @var string host
      */

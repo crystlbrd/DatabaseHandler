@@ -13,9 +13,6 @@ use Prophecy\Prophet;
 
 class TestingMySQLConnection extends MySQLConnection
 {
-    use PDOConnection;
-    use MySQLPDODriver;
-
     protected $Prophet;
 
     public function __construct(string $host, string $user, string $pass, string $name, array $options = [])
