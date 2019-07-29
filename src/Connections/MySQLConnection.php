@@ -11,7 +11,7 @@ class MySQLConnection extends PDOConnection
 
     /**
      * Selects rows from a table
-     * @param mixed $tables one or more table names
+     * @param string|array $tables one or more table names
      * @param array $columns columns to select
      * @param array $conditions conditions
      * @param array $options additional options
