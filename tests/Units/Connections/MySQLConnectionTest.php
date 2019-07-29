@@ -2,6 +2,8 @@
 
 namespace crystlbrd\Exceptionist\Tests\Units\Connections;
 
+use crystlbrd\DatabaseHandler\DatabaseHandler;
+use crystlbrd\DatabaseHandler\IConnection;
 use crystlbrd\DatabaseHandler\Tests\Mocks\TestingMySQLConnection;
 use PHPUnit\Framework\TestCase;
 
@@ -184,5 +186,44 @@ class MySQLConnectionTest extends TestCase
 
         self::assertNotFalse($res);
         self::assertSame('SELECT * FROM table1 GROUP BY col3 ORDER BY col1, col2 DESC', $this->Connection->getLastQuery());
+    }
+
+    public function testJoinedSelect()
+    {
+        $res = $this->Connection->select([
+            'table1',
+            'table2' => [
+                'join' => IConnection::JOIN_INNER,
+                'on' => 'col2 = table1.col1'
+            ],
+            'table3' => [
+                'join' => IConnection::JOIN_LEFT,
+                'on' => 'col3 = table1.col1'
+            ],
+            'table4' => [
+                'join' => IConnection::JOIN_RIGHT,
+                'on' => 'col4 = table1.col1'
+            ],
+            'table5' => [
+                'join' => IConnection::JOIN_FULL,
+                'on' => 'col5 = table1.col1'
+            ],
+            'table6' => [
+                'join' => IConnection::JOIN_CROSS,
+                'on' => 'col6 = table1.col1'
+            ]
+        ]);
+
+        self::assertNotFalse($res);
+
+        $expect = 'SELECT * FROM table1';
+
+        $expect .= ' INNER JOIN table2 ON table2.col2 = table1.col1';
+        $expect .= ' LEFT JOIN table3 ON table3.col3 = table1.col1';
+        $expect .= ' RIGHT JOIN table4 ON table4.col4 = table1.col1';
+        $expect .= ' FULL OUTER JOIN table5 ON table5.col5 = table1.col1';
+        $expect .= ' CROSS JOIN table6 ON table6.col6 = table1.col1';
+
+        self::assertSame($expect, $this->Connection->getLastQuery());
     }
 }

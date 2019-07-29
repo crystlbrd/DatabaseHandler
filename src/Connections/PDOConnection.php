@@ -385,7 +385,7 @@ abstract class PDOConnection implements IConnection
                     $sql .= ' ' . $this->parseJoin($data['join']) . ' ' . $table;
 
                     // ON
-                    $sql .= ' ON ' . $table . $data['on'];
+                    $sql .= ' ON ' . $table . '.' . $data['on'];
                 } else {
                     // Malformed array
                     $this->log(new ConnectionException('Invalid array syntax.'), Environment::E_LEVEL_ERROR);
