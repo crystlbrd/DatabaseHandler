@@ -8,6 +8,7 @@ use crystlbrd\Exceptionist\Environment;
 use crystlbrd\Exceptionist\ExceptionistTrait;
 use PDO;
 use PDOException;
+use PDOStatement;
 
 abstract class PDOConnection implements IConnection
 {
@@ -194,6 +195,11 @@ abstract class PDOConnection implements IConnection
         return $this;
     }
 
+    /**
+     * Gets the database credentials
+     * @param string|null $index Set to get only one entry (host, user, pass, name)
+     * @return array|string
+     */
     public function getCredentials($index = null)
     {
         $credentials = [
@@ -247,6 +253,11 @@ abstract class PDOConnection implements IConnection
         return intval($id);
     }
 
+    /**
+     * Bind a parameter to the internal cache
+     * @param string|int|float $value Value of the parameter
+     * @return string
+     */
     protected function bindParam($value): string
     {
         // Value already defined?
@@ -268,6 +279,11 @@ abstract class PDOConnection implements IConnection
         }
     }
 
+    /**
+     * Parses the operator placeholders
+     * @param string $operator
+     * @return bool|string
+     */
     protected function parseOperator(string $operator)
     {
         $dict_operators = [
@@ -282,7 +298,12 @@ abstract class PDOConnection implements IConnection
         return (isset($dict_operators[$operator]) ? $dict_operators[$operator] : false);
     }
 
-    protected function parseValue($value)
+    /**
+     * Splits operator and actual value
+     * @param string $value The value mixed with the operator
+     * @return string
+     */
+    protected function parseValue(string $value): string
     {
         // Try to detect simple syntax
         $e = explode(' ', $value);
@@ -309,6 +330,11 @@ abstract class PDOConnection implements IConnection
         return ' = ' . $this->bindParam($value);
     }
 
+    /**
+     * Parses the joining type
+     * @param int $type
+     * @return string
+     */
     protected function parseJoin(int $type): string
     {
         switch ($type) {
@@ -333,6 +359,12 @@ abstract class PDOConnection implements IConnection
         }
     }
 
+    /**
+     * Parses a table selection and returns valid SQL table selection
+     * @param string|array $tables
+     * @return string
+     * @throws ConnectionException
+     */
     protected function parseTables($tables): string
     {
         // define string
@@ -368,6 +400,11 @@ abstract class PDOConnection implements IConnection
         return $sql;
     }
 
+    /**
+     * Parses a column selection and returns a valid SQL column selection
+     * @param array $columns
+     * @return string
+     */
     protected function parseColumns(array $columns): string
     {
         // define string
@@ -396,6 +433,12 @@ abstract class PDOConnection implements IConnection
         return $sql;
     }
 
+    /**
+     * Parses a condition definition and returns a valid SQL conditions statement
+     * @param array $conditions
+     * @return string
+     * @throws ConnectionException
+     */
     protected function parseConditions(array $conditions): string
     {
         // define string
@@ -440,6 +483,12 @@ abstract class PDOConnection implements IConnection
         return $sql;
     }
 
+    /**
+     * Parses an array of AND conditions
+     * @param array $conditions
+     * @param bool $skipFirstAnd
+     * @return string
+     */
     protected function parseAndConditions(array $conditions, bool $skipFirstAnd = true): string
     {
         // define string
@@ -475,6 +524,12 @@ abstract class PDOConnection implements IConnection
         return $sql;
     }
 
+    /**
+     * Parses a option array and returns the corresponding SQL translation
+     * @param array $options
+     * @return string
+     * @throws ConnectionException
+     */
     protected function parseOptions(array $options): string
     {
         // define string
@@ -523,6 +578,12 @@ abstract class PDOConnection implements IConnection
         return $sql;
     }
 
+    /**
+     * Executes the internally prepared statement
+     * @param string $sql
+     * @return bool|PDOStatement
+     * @throws ConnectionException
+     */
     protected function execute(string $sql)
     {
         // Prepare a statement
