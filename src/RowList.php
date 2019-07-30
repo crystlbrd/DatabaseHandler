@@ -69,7 +69,7 @@ class RowList
     /**
      * Resets the internal pointer to the beginning
      */
-    public function reset()
+    public function reset(): void
     {
         // reset the pointer to 0
         $this->RowPointer = 0;
@@ -81,7 +81,7 @@ class RowList
      * @return bool
      * @throws RowListException
      */
-    public function update(array $data)
+    public function update(array $data): bool
     {
         // go throw all rows
         foreach ($this->Rows as $row) {
@@ -106,7 +106,7 @@ class RowList
      * @return bool
      * @throws RowListException
      */
-    public function delete()
+    public function delete(): bool
     {
         // go throw all rows
         foreach ($this->Rows as $i => $row) {
