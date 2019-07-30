@@ -52,7 +52,7 @@ class MySQLConnection extends PDOConnection
      */
     public function update(string $table, array $columns, array $conditions): bool
     {
-        // TODO: Implement update() method.
+        // TODO: [v1] Implement update() method.
     }
 
     /**
@@ -63,7 +63,7 @@ class MySQLConnection extends PDOConnection
      */
     public function insert(string $table, array $data): int
     {
-        // TODO: Implement insert() method.
+        // TODO: [v1] Implement insert() method.
     }
 
     /**
@@ -74,6 +74,6 @@ class MySQLConnection extends PDOConnection
      */
     public function delete(string $table, array $conditions): bool
     {
-        // TODO: Implement delete() method.
+        // TODO: [v1] Implement delete() method.
     }
 }
