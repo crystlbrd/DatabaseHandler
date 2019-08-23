@@ -83,7 +83,7 @@ class PDORowList implements IRowList
      */
     public function fetchAll(): array
     {
-        // TODO: Implement fetchAll() method.
+        return $this->Result;
     }
 
     /**
