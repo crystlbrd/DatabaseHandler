@@ -114,9 +114,9 @@ interface IConnection
      * @param array $columns columns to select
      * @param array $conditions conditions
      * @param array $options additional options
-     * @return RowList
+     * @return IRowList
      */
-    public function select($tables, array $columns = [], array $conditions = [], array $options = []): RowList;
+    public function select($tables, array $columns = [], array $conditions = [], array $options = []): IRowList;
 
     /**
      * Updates rows in a table

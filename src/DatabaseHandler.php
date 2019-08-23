@@ -28,12 +28,6 @@ class DatabaseHandler
      */
     private $ConnectionPointer;
 
-    /**
-     * @var array internal logs
-     */
-    protected $Logs = [];
-
-
     public function __construct(array $options = [])
     {
         // load options

@@ -27,6 +27,11 @@ class Table
 
     public function select(array $columns = [], array $conditions = [], array $options = []): RowList
     {
-        // TODO: Implement select
+        return $this->Connection->select($this->getTables(), $columns, $conditions, $options);
+    }
+
+    private function getTables()
+    {
+        return $this->TableName;
     }
 }
