@@ -9,7 +9,7 @@ interface IRowList
      * @param IConnection $connection current connection
      * @param mixed $data received results
      */
-    public function __construct(IConnection $connection, $data);
+    public function __construct(IConnection $connection, Table $table, $data);
 
     /**
      * Fetches a row from the results

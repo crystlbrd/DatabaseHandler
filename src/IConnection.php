@@ -114,9 +114,9 @@ interface IConnection
      * @param array $columns columns to select
      * @param array $conditions conditions
      * @param array $options additional options
-     * @return IRowList
+     * @return array
      */
-    public function select($tables, array $columns = [], array $conditions = [], array $options = []): IRowList;
+    public function select($tables, array $columns = [], array $conditions = [], array $options = []): array;
 
     /**
      * Updates rows in a table
@@ -142,4 +142,11 @@ interface IConnection
      * @return bool
      */
     public function delete(string $table, array $conditions): bool;
+
+    /**
+     * Returns the description for a table
+     * @param string $table table name
+     * @return array
+     */
+    public function describe(string $table): array;
 }

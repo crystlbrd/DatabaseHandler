@@ -6,6 +6,7 @@ use crystlbrd\DatabaseHandler\Exceptions\ConnectionException;
 use crystlbrd\DatabaseHandler\IConnection;
 use crystlbrd\Exceptionist\Environment;
 use crystlbrd\Exceptionist\ExceptionistTrait;
+use http\Env;
 use PDO;
 use PDOException;
 use PDOStatement;
@@ -58,6 +59,16 @@ abstract class PDOConnection implements IConnection
      * @var array Cached Parameters
      */
     protected $Parameters = [];
+
+    /**
+     * Used to separate the table name from the column name in the alias
+     */
+    public const COLUMN_SEPERATOR = '_crysbrd_dbh_pdoc_';
+
+    /**
+     * Used to separate the column name and the user defined alias
+     */
+    public const ALIAS_SEPERATOR = '_as_';
 
 
     /**
@@ -418,19 +429,37 @@ abstract class PDOConnection implements IConnection
 
                 // check for AS syntax
                 if (is_int($column)) {
-                    $sql .= $label;
+                    list($table, $column) = $this->parseColumn($label);
+                    $label = $column;
                 } else {
-                    $sql .= $column . ' AS ' . $label;
+                    list($table, $column) = $this->parseColumn($column);
                 }
+
+                // Build SQL
+                $sql .= $column . ' AS ' . $table . self::COLUMN_SEPERATOR . $column . self::ALIAS_SEPERATOR . $label;
 
                 $i++;
             }
         } else {
-            $sql .= '*';
+            // Empty column selection are not supported - there breaking the parsing
+            $this->log(new ConnectionException('Empty column selections are not supported!'), Environment::E_LEVEL_ERROR);
+
+            // return an empty string if exceptions are disabled
+            return '';
         }
 
         // return string
         return $sql;
+    }
+
+    /**
+     * Splits a column selector into the table and column name
+     * @param string $selector
+     * @return array
+     */
+    protected function parseColumn(string $selector): array
+    {
+        return explode('.', $selector);
     }
 
     /**
