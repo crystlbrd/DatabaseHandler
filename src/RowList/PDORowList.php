@@ -103,23 +103,4 @@ class PDORowList implements IRowList
     {
         $this->Pointer = 0;
     }
-
-    /**
-     * Updates all rows
-     * @param array $data array(column => new value)
-     * @return bool
-     */
-    public function update(array $data): bool
-    {
-        // TODO: Implement update() method.
-    }
-
-    /**
-     * Deletes all rows from the data source
-     * @return bool
-     */
-    public function delete(): bool
-    {
-        // TODO: Implement delete() method.
-    }
 }
