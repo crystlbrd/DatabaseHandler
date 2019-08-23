@@ -101,7 +101,7 @@ class PDORowList implements IRowList
      */
     public function reset(): void
     {
-        // TODO: Implement reset() method.
+        $this->Pointer = 0;
     }
 
     /**
