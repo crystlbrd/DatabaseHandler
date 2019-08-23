@@ -103,10 +103,10 @@ abstract class PDOConnection implements IConnection
                 $dst .= 'dbname=' . $this->Name . ';';
 
                 // encoding
-                $dst .= 'charset=' . $this->Options['encoding'];
+                $dst .= 'charset=' . $this->Options['encoding'] . ';';
 
                 // port
-                $dst .= 'port=' . $this->Options['port'];
+                $dst .= 'port=' . $this->Options['port'] . ';';
 
                 // open connection
                 $this->PDO = new PDO($dst, $this->User, $this->Pass);
