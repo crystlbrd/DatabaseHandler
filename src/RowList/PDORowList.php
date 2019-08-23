@@ -8,6 +8,7 @@ use crystlbrd\DatabaseHandler\IRowList;
 use crystlbrd\DatabaseHandler\Row;
 use crystlbrd\Exceptionist\Environment;
 use crystlbrd\Exceptionist\ExceptionistTrait;
+use PDO;
 use PDOStatement;
 
 class PDORowList implements IRowList
@@ -57,7 +58,7 @@ class PDORowList implements IRowList
      */
     private function parseStatement(PDOStatement $stm)
     {
-        while ($r = $stm->fetch(\PDO::FETCH_ASSOC)) {
+        while ($r = $stm->fetch(PDO::FETCH_ASSOC)) {
             $this->Result[] = new Row($this->Connection, $r);
         }
     }
