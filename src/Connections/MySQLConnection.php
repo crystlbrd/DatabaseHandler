@@ -3,7 +3,9 @@
 namespace crystlbrd\DatabaseHandler\Connections;
 
 use crystlbrd\DatabaseHandler\Exceptions\ConnectionException;
-use crystlbrd\DatabaseHandler\RowList;
+use crystlbrd\DatabaseHandler\Exceptions\RowListException;
+use crystlbrd\DatabaseHandler\IRowList;
+use crystlbrd\DatabaseHandler\RowList\PDORowList;
 use crystlbrd\Exceptionist\ExceptionistTrait;
 
 class MySQLConnection extends PDOConnection
@@ -16,10 +18,11 @@ class MySQLConnection extends PDOConnection
      * @param array $columns columns to select
      * @param array $conditions conditions
      * @param array $options additional options
-     * @return RowList
+     * @return IRowList
      * @throws ConnectionException
+     * @throws RowListException
      */
-    public function select($tables, array $columns = [], array $conditions = [], array $options = []): RowList
+    public function select($tables, array $columns = [], array $conditions = [], array $options = []): IRowList
     {
         // SELECT
         $sql = 'SELECT';
@@ -40,7 +43,7 @@ class MySQLConnection extends PDOConnection
             $sql .= $this->parseOptions($options);
         }
 
-        return new RowList($this, $this->execute($sql));
+        return new PDORowList($this, $this->execute($sql));
     }
 
     /**
