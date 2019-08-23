@@ -92,7 +92,7 @@ class PDORowList implements IRowList
      */
     public function countRows(): int
     {
-        // TODO: Implement countRows() method.
+        return count($this->Result);
     }
 
     /**
