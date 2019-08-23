@@ -13,9 +13,9 @@ interface IRowList
 
     /**
      * Fetches a row from the results
-     * @return Row
+     * @return bool|Row
      */
-    public function fetch(): Row;
+    public function fetch();
 
     /**
      * Returns all rows from the result as a numeric array

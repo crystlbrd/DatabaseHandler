@@ -64,11 +64,17 @@ class PDORowList implements IRowList
 
     /**
      * Fetches a row from the results
-     * @return Row
+     * @return bool|Row
      */
-    public function fetch(): Row
+    public function fetch()
     {
-        // TODO: Implement fetch() method.
+        // try to get the next row
+        if (isset($this->Result[$this->Pointer])) {
+            return $this->Result[$this->Pointer++];
+        } else {
+            // return false, if there is none
+            return false;
+        }
     }
 
     /**
