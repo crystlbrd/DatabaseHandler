@@ -114,12 +114,12 @@ abstract class PDOConnection implements IConnection
                 // we are happy and returning true
                 return true;
             } catch (PDOException $e) {
-                $this->log(new ConnectionException('Failed to connect to database!', $e), 'error');
+                $this->log(new ConnectionException('Failed to connect to database!', $e), Environment::E_LEVEL_ERROR);
                 return false;
             }
         } else {
             // just log the info
-            $this->log(new ConnectionException('Connection already opened.'), 'debug');
+            $this->log(new ConnectionException('Connection already opened.'), Environment::E_LEVEL_DEBUG);
 
             // but it's not an error, so return true
             return true;

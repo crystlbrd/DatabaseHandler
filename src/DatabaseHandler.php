@@ -58,7 +58,7 @@ class DatabaseHandler
             return $this->use($name);
         } else {
             // log if not
-            $this->log(new DatabaseHandlerException('Connection with name ' . $name . ' already defined!'), 'warning');
+            $this->log(new DatabaseHandlerException('Connection with name ' . $name . ' already defined!'), Environment::E_LEVEL_WARNING);
             return false;
         }
     }
@@ -77,7 +77,7 @@ class DatabaseHandler
             return true;
         } else {
             // just log it this time
-            $this->log(new DatabaseHandlerException('No connection with name ' . $name . ' found!'), 'warning');
+            $this->log(new DatabaseHandlerException('No connection with name ' . $name . ' found!'), Environment::E_LEVEL_WARNING);
             return false;
         }
     }
@@ -99,11 +99,11 @@ class DatabaseHandler
                 return $this->Connections[$this->ConnectionPointer]->openConnection();
             } catch (ConnectionException $e) {
                 // chain exceptions
-                $this->log(new DatabaseHandlerException('Failed to set pointer on ' . $name . '!', $e), 'error');
+                $this->log(new DatabaseHandlerException('Failed to set pointer on ' . $name . '!', $e), Environment::E_LEVEL_ERROR);
             }
         } else {
             // throw exception if not
-            $this->log(new DatabaseHandlerException('No connection with name ' . $name . ' found!'), 'error');
+            $this->log(new DatabaseHandlerException('No connection with name ' . $name . ' found!'), Environment::E_LEVEL_ERROR);
             return false;
         }
     }
@@ -115,7 +115,7 @@ class DatabaseHandler
             return new Table($this->getActiveConnection(),
                 $table);
         } catch (TableException $e) {
-            $this->log(new DatabaseHandlerException('Failed to load table ' . $table . '!', $e), 'error');
+            $this->log(new DatabaseHandlerException('Failed to load table ' . $table . '!', $e), Environment::E_LEVEL_ERROR);
         }
     }
 }
