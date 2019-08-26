@@ -3,10 +3,9 @@
 namespace crystlbrd\DatabaseHandler\Connections;
 
 use crystlbrd\DatabaseHandler\Exceptions\ConnectionException;
-use crystlbrd\DatabaseHandler\IConnection;
+use crystlbrd\DatabaseHandler\Interfaces\IConnection;
 use crystlbrd\Exceptionist\Environment;
 use crystlbrd\Exceptionist\ExceptionistTrait;
-use http\Env;
 use PDO;
 use PDOException;
 use PDOStatement;

@@ -1,6 +1,6 @@
 <?php
 
-namespace crystlbrd\DatabaseHandler;
+namespace crystlbrd\DatabaseHandler\Interfaces;
 
 interface IRowList
 {

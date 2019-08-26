@@ -2,6 +2,8 @@
 
 namespace crystlbrd\DatabaseHandler;
 
+use crystlbrd\DatabaseHandler\Interfaces\IConnection;
+
 class Table
 {
     /**
