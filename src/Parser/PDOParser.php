@@ -6,8 +6,7 @@ namespace crystlbrd\DatabaseHandler\Parser;
 
 use crystlbrd\DatabaseHandler\Connections\PDOConnection;
 use crystlbrd\DatabaseHandler\Exceptions\ParserException;
-use crystlbrd\DatabaseHandler\IParser;
-use crystlbrd\Exceptionist\Environment;
+use crystlbrd\DatabaseHandler\Interfaces\IParser;
 use crystlbrd\Exceptionist\ExceptionistTrait;
 use PDO;
 use PDOStatement;

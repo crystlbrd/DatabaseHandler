@@ -5,19 +5,25 @@ namespace crystlbrd\Exceptionist\Tests\Units\Connections;
 use crystlbrd\DatabaseHandler\DatabaseHandler;
 use crystlbrd\DatabaseHandler\IConnection;
 use crystlbrd\DatabaseHandler\Result;
+use crystlbrd\DatabaseHandler\Tests\DatabaseTestTrait;
 use crystlbrd\DatabaseHandler\Tests\Mocks\TestingMySQLConnection;
 use PHPUnit\Framework\TestCase;
 
 class MySQLConnectionTest extends TestCase
 {
+    use DatabaseTestTrait;
+
     protected $Connection;
 
     protected function setUp(): void
     {
-        // the credentials aren't actually relevant
-        $this->Connection = new TestingMySQLConnection('', '', '', '');
+        // set up the database
+        $this->setUpDatabase();
 
-        // "open" the connection
+        // get the connection reverence
+        $this->Connection = $this->getMySQLConnection();
+
+        // open the connection
         $this->Connection->openConnection();
     }
 
@@ -26,20 +32,13 @@ class MySQLConnectionTest extends TestCase
      */
     public function testGetterAndSetter()
     {
-        // Set
-        $this->Connection
-            ->setHost('localhost')
-            ->setUser('root')
-            ->setPassword('toor')
-            ->setName('database');
-
         // Get
         $this->assertIsArray($this->Connection->getCredentials());
 
-        $this->assertSame($this->Connection->getCredentials('host'), 'localhost');
-        $this->assertSame($this->Connection->getCredentials('user'), 'root');
-        $this->assertSame($this->Connection->getCredentials('pass'), 'toor');
-        $this->assertSame($this->Connection->getCredentials('name'), 'database');
+        $this->assertSame($this->Connection->getCredentials('host'), $_ENV['db_host']);
+        $this->assertSame($this->Connection->getCredentials('user'), $_ENV['db_user']);
+        $this->assertSame($this->Connection->getCredentials('pass'), $_ENV['db_pass']);
+        $this->assertSame($this->Connection->getCredentials('name'), $_ENV['db_name']);
     }
 
     /**
@@ -48,7 +47,7 @@ class MySQLConnectionTest extends TestCase
     public function testSelectAll()
     {
         // SELECT *
-        $res = $this->Connection->select('table1');
+        $res = $this->Connection->select('table1', ['table1.col1', 'table1.col2']);
 
         self::assertInstanceOf(Result::class, $res);
         $this->assertSame('SELECT * FROM table1', $this->Connection->getLastQuery());

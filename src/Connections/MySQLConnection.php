@@ -23,7 +23,7 @@ class MySQLConnection extends PDOConnection
      * @throws ConnectionException
      * @throws ParserException
      */
-    public function select($tables, array $columns = [], array $conditions = [], array $options = []): array
+    public function select($tables, array $columns, array $conditions = [], array $options = []): array
     {
         // SELECT
         $sql = 'SELECT';
@@ -49,7 +49,7 @@ class MySQLConnection extends PDOConnection
 
         if ($result !== false) {
             // Parse result
-            $result = PDOParser::parse($this->execute($sql));
+            return PDOParser::parse($result);
         } else {
             // Throw an exception if
             $this->log(new ConnectionException('Failed to select data from ' . json_encode($tables) . '!'), Environment::E_LEVEL_ERROR);

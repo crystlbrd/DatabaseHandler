@@ -116,7 +116,7 @@ interface IConnection
      * @param array $options additional options
      * @return array
      */
-    public function select($tables, array $columns = [], array $conditions = [], array $options = []): array;
+    public function select($tables, array $columns, array $conditions = [], array $options = []): array;
 
     /**
      * Updates rows in a table
