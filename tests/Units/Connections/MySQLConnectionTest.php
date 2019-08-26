@@ -4,7 +4,7 @@ namespace crystlbrd\Exceptionist\Tests\Units\Connections;
 
 use crystlbrd\DatabaseHandler\DatabaseHandler;
 use crystlbrd\DatabaseHandler\IConnection;
-use crystlbrd\DatabaseHandler\RowList;
+use crystlbrd\DatabaseHandler\Result;
 use crystlbrd\DatabaseHandler\Tests\Mocks\TestingMySQLConnection;
 use PHPUnit\Framework\TestCase;
 
@@ -50,7 +50,7 @@ class MySQLConnectionTest extends TestCase
         // SELECT *
         $res = $this->Connection->select('table1');
 
-        self::assertInstanceOf(RowList::class, $res);
+        self::assertInstanceOf(Result::class, $res);
         $this->assertSame('SELECT * FROM table1', $this->Connection->getLastQuery());
     }
 
@@ -62,7 +62,7 @@ class MySQLConnectionTest extends TestCase
         // SELECT some columns
         $res = $this->Connection->select('table1', ['col1', 'col2' => 'alias']);
 
-        self::assertInstanceOf(RowList::class, $res);
+        self::assertInstanceOf(Result::class, $res);
         $this->assertSame('SELECT col1, col2 AS alias FROM table1', $this->Connection->getLastQuery());
     }
 
@@ -83,7 +83,7 @@ class MySQLConnectionTest extends TestCase
             ]
         );
 
-        self::assertInstanceOf(RowList::class, $res);
+        self::assertInstanceOf(Result::class, $res);
         $this->assertSame('SELECT * FROM table1 WHERE col1 = "val1" AND col2 = "val2" AND col3 = "val3.1" AND col3 = "val3.2"', $this->Connection->getLastQuery());
     }
 
@@ -105,7 +105,7 @@ class MySQLConnectionTest extends TestCase
             ]
         );
 
-        self::assertInstanceOf(RowList::class, $res);
+        self::assertInstanceOf(Result::class, $res);
         $this->assertSame('SELECT * FROM table1 WHERE col1 = "val1" OR col2 = "val2" OR col3 = "val3" AND col4 = "val4" OR col5 = "val5.1" OR col5 = "val5.2"', $this->Connection->getLastQuery());
     }
 
@@ -132,7 +132,7 @@ class MySQLConnectionTest extends TestCase
             ]
         );
 
-        self::assertInstanceOf(RowList::class, $res);
+        self::assertInstanceOf(Result::class, $res);
 
         // Expected SQL
         $sql = 'SELECT * FROM table1 WHERE ';
@@ -164,7 +164,7 @@ class MySQLConnectionTest extends TestCase
             ]
         );
 
-        self::assertInstanceOf(RowList::class, $res);
+        self::assertInstanceOf(Result::class, $res);
 
         $expect = 'SELECT * FROM table1 WHERE ';
 
@@ -215,7 +215,7 @@ class MySQLConnectionTest extends TestCase
             ]
         ]);
 
-        self::assertInstanceOf(RowList::class, $res);
+        self::assertInstanceOf(Result::class, $res);
 
         $expect = 'SELECT * FROM table1';
 

@@ -4,7 +4,7 @@ namespace crystlbrd\DatabaseHandler;
 
 use crystlbrd\DatabaseHandler\Interfaces\IConnection;
 
-class Row
+class Entry
 {
     public function __construct(IConnection $connection, array $data)
     {

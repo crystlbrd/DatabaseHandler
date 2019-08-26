@@ -58,10 +58,10 @@ class Table
         // TODO: Implement join()
     }
 
-    public function select(array $columns = [], array $conditions = [], array $options = []): RowList
+    public function select(array $columns = [], array $conditions = [], array $options = []): Result
     {
         $result = $this->Connection->select($this->getTables(), $this->parseColumns($columns), $conditions, $options);
-        return new RowList($this, $result);
+        return new Result($this, $result);
     }
 
     private function getTables(): string

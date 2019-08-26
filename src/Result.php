@@ -2,7 +2,7 @@
 
 namespace crystlbrd\DatabaseHandler;
 
-class RowList
+class Result
 {
     public function __construct(Table $table, array $result)
     {
