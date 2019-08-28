@@ -13,8 +13,12 @@ jobs:
     name: Build & Test
     runs-on: ubuntu-latest
     steps:
-      - name: Install Docker
+      - name: Install PHP 7.3
         uses: docker://php:7.3
+      - name: Install MySQL
+        uses: docker://mysql:latest
+      - name: Start MySQL Server
+        run: docker run --name testdb -e MYSQL_ROOT_PASSWORD=supersecretpassword -d mysql
       - name: Install Repository
         uses: actions/checkout@v1
       - name: Install Composer
