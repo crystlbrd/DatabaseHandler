@@ -12,7 +12,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: docker://php:7.3
-      - uses: action/checkout@master
         
   test:
     needs: build
