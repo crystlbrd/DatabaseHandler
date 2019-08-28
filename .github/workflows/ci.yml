@@ -15,6 +15,8 @@ jobs:
     steps:
       - name: Install Docker
         uses: docker://php:7.3
+      - name: Install repository
+        uses: actions/checkout@v1
       - name: Install Composer
         run: curl https://getcomposer.org/installer | php
       - name: Install dependencies 
