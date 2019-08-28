@@ -1,6 +1,9 @@
 name: CI
 
-on: [push]
+on: 
+  pull_request:
+  - master
+  - develop
 
 jobs:
   build:
@@ -8,10 +11,9 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-    - uses: actions/checkout@v1
-    - name: Run a one-line script
-      run: echo Hello, world!
-    - name: Run a multi-line script
-      run: |
-        echo Add other actions to build,
-        echo test, and deploy your project.
+      - uses: docker://php:7.3
+        
+  test:
+    steps:
+      - name: run phpunit
+        run: php vendor/bin/phpunit.php
