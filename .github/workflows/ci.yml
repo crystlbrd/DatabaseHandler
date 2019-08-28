@@ -1,17 +1,24 @@
 name: CI
 
 on: 
+  push:
+    branches:
+      - develop
   pull_request:
     branches:
       - master
-      - develop
 
 jobs:
   build:
 
     runs-on: ubuntu-latest
     steps:
-      - uses: docker://php:7.3
+      - name: Install Docker
+        uses: docker://php:7.3
+      - name: Install Composer
+        run: curl https://getcomposer.org/installer | php
+      - name: Install dependencies 
+        run: php composer.phar install
         
   test:
     needs: build
