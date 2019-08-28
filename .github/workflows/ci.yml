@@ -1,0 +1,25 @@
+name: CI
+
+on: 
+  push:
+    branches:
+      - develop
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  test:
+    name: Build & Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Docker
+        uses: docker://php:7.3
+      - name: Install Repository
+        uses: actions/checkout@v1
+      - name: Install Composer
+        run: curl https://getcomposer.org/installer | php
+      - name: Install Dependencies 
+        run: php composer.phar install
+      - name: Run Tests
+        run: php vendor/bin/phpunit
