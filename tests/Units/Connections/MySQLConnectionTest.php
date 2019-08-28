@@ -3,10 +3,8 @@
 namespace crystlbrd\Exceptionist\Tests\Units\Connections;
 
 use crystlbrd\DatabaseHandler\DatabaseHandler;
-use crystlbrd\DatabaseHandler\IConnection;
 use crystlbrd\DatabaseHandler\Result;
 use crystlbrd\DatabaseHandler\Tests\DatabaseTestTrait;
-use crystlbrd\DatabaseHandler\Tests\Mocks\TestingMySQLConnection;
 use PHPUnit\Framework\TestCase;
 
 class MySQLConnectionTest extends TestCase
@@ -14,6 +12,7 @@ class MySQLConnectionTest extends TestCase
     use DatabaseTestTrait;
 
     protected $Connection;
+    protected $DatabaseHandler;
 
     protected function setUp(): void
     {
@@ -22,6 +21,12 @@ class MySQLConnectionTest extends TestCase
 
         // get the connection reverence
         $this->Connection = $this->getMySQLConnection();
+
+        // init the DatabaseHandler
+        $this->DatabaseHandler = new DatabaseHandler();
+
+        // add the connection
+        $this->DatabaseHandler->addConnection('mysql', $this->Connection);
 
         // open the connection
         $this->Connection->openConnection();
@@ -46,8 +51,11 @@ class MySQLConnectionTest extends TestCase
      */
     public function testSelectAll()
     {
+        // load the table
+        $table = $this->DatabaseHandler->load('table1');
+
         // SELECT *
-        $res = $this->Connection->select('table1', ['table1.col1', 'table1.col2']);
+        $res = $table->select();
 
         self::assertInstanceOf(Result::class, $res);
         $this->assertSame('SELECT * FROM table1', $this->Connection->getLastQuery());

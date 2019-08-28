@@ -101,12 +101,20 @@ class DatabaseHandler
         }
     }
 
+    /**
+     * Loads a table form the database
+     * @param string $table
+     * @return Table
+     * @throws DatabaseHandlerException
+     */
     public function load(string $table): Table
     {
         try {
             // init the table
-            return new Table($this->getActiveConnection(),
-                $table);
+            return new Table(
+                $this->getActiveConnection(),
+                $table
+            );
         } catch (TableException $e) {
             $this->log(new DatabaseHandlerException('Failed to load table ' . $table . '!', $e), Environment::E_LEVEL_ERROR);
         }
