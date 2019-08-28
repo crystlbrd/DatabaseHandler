@@ -9,22 +9,17 @@ on:
       - master
 
 jobs:
-  build:
-
+  test:
+    name: Build & Test
     runs-on: ubuntu-latest
     steps:
       - name: Install Docker
         uses: docker://php:7.3
-      - name: Install repository
+      - name: Install Repository
         uses: actions/checkout@v1
       - name: Install Composer
         run: curl https://getcomposer.org/installer | php
-      - name: Install dependencies 
+      - name: Install Dependencies 
         run: php composer.phar install
-        
-  test:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: run phpunit
-        run: php ./github/workspace/vendor/bin/phpunit
+      - name: Run Tests
+        run: php vendor/bin/phpunit
