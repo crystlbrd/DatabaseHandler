@@ -10,11 +10,13 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-    
     steps:
       - uses: docker://php:7.3
+      - uses: action/setup-node@master
         
   test:
+    needs: build
+    runs-on: ubuntu-latest
     steps:
       - name: run phpunit
         run: php vendor/bin/phpunit.php
