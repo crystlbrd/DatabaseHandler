@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: docker://php:7.3
-      - uses: action/setup-node@master
+      - uses: action/checkout@master
         
   test:
     needs: build
