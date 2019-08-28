@@ -7,7 +7,7 @@
         <!-- DATABASE CONFIGURATION -->
         <env name="db_host" value="localhost" />
         <env name="db_user" value="root" />
-        <env name="db_pass" value="supersecretpassword" />
+        <env name="db_pass" value="root" />
         <env name="db_name" value="test_databasehandler" />
     </php>
 

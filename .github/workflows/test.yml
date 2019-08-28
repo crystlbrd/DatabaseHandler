@@ -12,10 +12,6 @@ jobs:
   test:
     name: Build & Test
     runs-on: ubuntu-latest
-    services:
-      mysql:
-        env:
-          MYSQL_DEFAULT_PASSWORD: supersecretpassword
     steps:
       - name: Install Repository
         uses: actions/checkout@v1
