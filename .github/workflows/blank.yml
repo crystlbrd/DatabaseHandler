@@ -19,4 +19,4 @@ jobs:
   test:
     steps:
       - name: run phpunit
-        run: php vendor/bin/phpunit.php
+        run: php ./github/workspace/vendor/bin/phpunit.php
