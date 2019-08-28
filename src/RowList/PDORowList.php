@@ -5,7 +5,7 @@ namespace crystlbrd\DatabaseHandler\RowList;
 use crystlbrd\DatabaseHandler\Exceptions\RowListException;
 use crystlbrd\DatabaseHandler\IConnection;
 use crystlbrd\DatabaseHandler\IRowList;
-use crystlbrd\DatabaseHandler\Row;
+use crystlbrd\DatabaseHandler\Entry;
 use crystlbrd\Exceptionist\Environment;
 use crystlbrd\Exceptionist\ExceptionistTrait;
 use PDO;
@@ -53,19 +53,19 @@ class PDORowList implements IRowList
     }
 
     /**
-     * Fetches all rows inside the statement and saves them internally as instances of Row
+     * Fetches all rows inside the statement and saves them internally as instances of Entry
      * @param PDOStatement $stm
      */
     private function parseStatement(PDOStatement $stm)
     {
         while ($r = $stm->fetch(PDO::FETCH_ASSOC)) {
-            $this->Result[] = new Row($this->Connection, $r);
+            $this->Result[] = new Entry($this->Connection, $r);
         }
     }
 
     /**
      * Fetches a row from the results
-     * @return bool|Row
+     * @return bool|Entry
      */
     public function fetch()
     {
@@ -102,24 +102,5 @@ class PDORowList implements IRowList
     public function reset(): void
     {
         $this->Pointer = 0;
-    }
-
-    /**
-     * Updates all rows
-     * @param array $data array(column => new value)
-     * @return bool
-     */
-    public function update(array $data): bool
-    {
-        // TODO: Implement update() method.
-    }
-
-    /**
-     * Deletes all rows from the data source
-     * @return bool
-     */
-    public function delete(): bool
-    {
-        // TODO: Implement delete() method.
     }
 }

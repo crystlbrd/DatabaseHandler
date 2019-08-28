@@ -7,7 +7,6 @@ use crystlbrd\DatabaseHandler\Exceptions\DatabaseHandlerException;
 use crystlbrd\DatabaseHandler\Exceptions\TableException;
 use crystlbrd\Exceptionist\Environment;
 use crystlbrd\Exceptionist\ExceptionistTrait;
-use Exception;
 
 class DatabaseHandler
 {
