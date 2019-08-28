@@ -24,7 +24,7 @@ trait DatabaseTestTrait
         $pdo = new PDO('mysql:host=' . $_ENV['db_host'] . ';', $_ENV['db_user'], $_ENV['db_pass']);
 
         // delete database
-        self::assertNotFalse($pdo->query('DROP IF EXISTS DATABASE ' . $_ENV['db_name']));
+        self::assertNotFalse($pdo->query('DROP DATABASE IF EXISTS ' . $_ENV['db_name']));
 
         // create database
         self::assertNotFalse($pdo->query('CREATE DATABASE ' . $_ENV['db_name']));
