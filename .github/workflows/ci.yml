@@ -27,4 +27,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: run phpunit
-        run: php vendor/bin/phpunit
+        run: php ./github/workspace/vendor/bin/phpunit
