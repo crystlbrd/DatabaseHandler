@@ -12,15 +12,11 @@ jobs:
   test:
     name: Build & Test
     runs-on: ubuntu-latest
+    services:
+      mysql:
+        env:
+          MYSQL_DEFAULT_PASSWORD: supersecretpassword
     steps:
-      - name: Install PHP 7.3
-        uses: docker://php:7.3
-      - name: Install MySQL
-        uses: docker://mysql:latest
-        with:
-          MYSQL_ROOT_PASSWORD: supersecretpassword
-      - name: Start MySQL Server
-        run: docker run --name testdb -e MYSQL_ROOT_PASSWORD=supersecretpassword -d mysql
       - name: Install Repository
         uses: actions/checkout@v1
       - name: Install Composer
