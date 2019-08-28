@@ -5,6 +5,7 @@ namespace crystlbrd\DatabaseHandler;
 use crystlbrd\DatabaseHandler\Exceptions\ConnectionException;
 use crystlbrd\DatabaseHandler\Exceptions\DatabaseHandlerException;
 use crystlbrd\DatabaseHandler\Exceptions\TableException;
+use crystlbrd\DatabaseHandler\Interfaces\IConnection;
 use crystlbrd\Exceptionist\Environment;
 use crystlbrd\Exceptionist\ExceptionistTrait;
 

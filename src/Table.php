@@ -94,6 +94,8 @@ class Table
 
             $result[$column] = $alias;
         }
+
+        return $result;
     }
 
     public function getAllColumns()
