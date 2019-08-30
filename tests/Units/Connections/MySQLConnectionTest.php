@@ -2,34 +2,35 @@
 
 namespace crystlbrd\Exceptionist\Tests\Units\Connections;
 
-use crystlbrd\DatabaseHandler\DatabaseHandler;
-use crystlbrd\DatabaseHandler\Result;
-use crystlbrd\DatabaseHandler\Tests\DatabaseTestTrait;
+use crystlbrd\DatabaseHandler\Connections\MySQLConnection;
+use crystlbrd\DatabaseHandler\Connections\PDOConnection;
+use crystlbrd\DatabaseHandler\Tests\Helper\Iterator\SQLIterator;
+use crystlbrd\DatabaseHandler\Tests\Helper\TestCases\DatabaseTestTrait;
+use crystlbrd\DatabaseHandler\Tests\Helper\Traits\SQLConnectionTestingTrait;
 use PHPUnit\Framework\TestCase;
 
 class MySQLConnectionTest extends TestCase
 {
     use DatabaseTestTrait;
-
-    protected $Connection;
-    protected $DatabaseHandler;
+    use SQLConnectionTestingTrait;
 
     protected function setUp(): void
     {
-        // set up the database
+        $this->config();
         $this->setUpDatabase();
+    }
 
-        // get the connection reverence
-        $this->Connection = $this->getMySQLConnection();
+    /**
+     * Defines Separators and ConnectionClass (required by SQLConnectionTestingTrait)
+     */
+    private function config(): void
+    {
+        $this->setConnectionClass(MySQLConnection::class);
+    }
 
-        // init the DatabaseHandler
-        $this->DatabaseHandler = new DatabaseHandler();
-
-        // add the connection
-        $this->DatabaseHandler->addConnection('mysql', $this->Connection);
-
-        // open the connection
-        $this->Connection->openConnection();
+    public function expectedSelectSQLTranslations()
+    {
+        return new SQLIterator(PDOConnection::COLUMN_SEPERATOR, PDOConnection::ALIAS_SEPERATOR);
     }
 
     /**
@@ -37,6 +38,7 @@ class MySQLConnectionTest extends TestCase
      */
     public function testGetterAndSetter()
     {
+        return;
         // Get
         $this->assertIsArray($this->Connection->getCredentials());
 
@@ -45,6 +47,4 @@ class MySQLConnectionTest extends TestCase
         $this->assertSame($this->Connection->getCredentials('pass'), $_ENV['db_pass']);
         $this->assertSame($this->Connection->getCredentials('name'), $_ENV['db_name']);
     }
-
-    # TODO rewrite tests
 }

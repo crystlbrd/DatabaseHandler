@@ -1,23 +1,12 @@
 <?php
 
-namespace crystlbrd\DatabaseHandler\Tests;
+namespace crystlbrd\DatabaseHandler\Tests\Helper\TestCases;
 
 use crystlbrd\DatabaseHandler\Connections\MySQLConnection;
 use PDO;
 
 trait DatabaseTestTrait
 {
-    public function getMySQLConnection(): MySQLConnection
-    {
-        // Credentials are defined in the phpunit.xml
-        return new MySQLConnection(
-            $_ENV['db_host'],
-            $_ENV['db_user'],
-            $_ENV['db_pass'],
-            $_ENV['db_name']
-        );
-    }
-
     public function setUpDatabase(): void
     {
         // connect to database

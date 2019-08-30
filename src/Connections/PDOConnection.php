@@ -435,7 +435,7 @@ abstract class PDOConnection implements IConnection
                 }
 
                 // Build SQL
-                $sql .= $column . ' AS ' . $table . self::COLUMN_SEPERATOR . $column . self::ALIAS_SEPERATOR . $label;
+                $sql .= $table . '.' . $column . ' AS ' . $table . self::COLUMN_SEPERATOR . $column . self::ALIAS_SEPERATOR . $label;
 
                 $i++;
             }

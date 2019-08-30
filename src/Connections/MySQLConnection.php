@@ -44,6 +44,9 @@ class MySQLConnection extends PDOConnection
             $sql .= $this->parseOptions($options);
         }
 
+        // adding end ;
+        $sql .= ';';
+
         // execute SQL
         $result = $this->execute($sql);
 
@@ -51,8 +54,21 @@ class MySQLConnection extends PDOConnection
             // Parse result
             return PDOParser::parse($result);
         } else {
-            // Throw an exception if
-            $this->log(new ConnectionException('Failed to select data from ' . json_encode($tables) . '!'), Environment::E_LEVEL_ERROR);
+            // Throw an exception on error
+            $this->log(
+                new ConnectionException('Failed to select data from ' . json_encode($tables) . '!',
+                    // log the PDO error as an own exception
+                    new ConnectionException(
+                        json_encode(
+                            array_merge(
+                                ['query' => $this->getLastQuery()],
+                                $this->getLastError()
+                            )
+                        )
+                    )
+                ),
+                Environment::E_LEVEL_ERROR
+            );
 
             // return an empty array if exceptions are disabled
             return [];
