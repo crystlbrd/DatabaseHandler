@@ -2,13 +2,18 @@
 
 namespace crystlbrd\DatabaseHandler\Tests\Helper\TestCases;
 
+use crystlbrd\DatabaseHandler\Connections\MySQLConnection;
 use PDO;
 use PHPUnit\Framework\TestCase;
 
 class DatabaseTestCase extends TestCase
 {
-    public function setUpDatabase(): void
+    protected $DefaultConnection;
+
+    protected function setUp(): void
     {
+        ### RESET DATABASE
+
         // connect to database
         $pdo = new PDO('mysql:host=' . $_ENV['db_host'] . ';', $_ENV['db_user'], $_ENV['db_pass']);
 
@@ -27,5 +32,9 @@ class DatabaseTestCase extends TestCase
 
         // set constraint
         self::assertNotFalse($pdo->query('ALTER TABLE table2 ADD CONSTRAINT FOREIGN KEY (ref_table1) REFERENCES table1 (col1) ON UPDATE no action ON DELETE no action'), json_encode($pdo->errorInfo()));
+
+        ### SET DEFAULTS
+
+        $this->DefaultConnection = new MySQLConnection($_ENV['db_host'], $_ENV['db_user'], $_ENV['db_pass'], $_ENV['db_name']);
     }
 }
