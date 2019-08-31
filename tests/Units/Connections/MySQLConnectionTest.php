@@ -7,7 +7,6 @@ use crystlbrd\DatabaseHandler\Connections\PDOConnection;
 use crystlbrd\DatabaseHandler\Tests\Helper\Iterator\SQLIterator;
 use crystlbrd\DatabaseHandler\Tests\Helper\TestCases\DatabaseTestCase;
 use crystlbrd\DatabaseHandler\Tests\Helper\Traits\SQLConnectionTestingTrait;
-use PHPUnit\Framework\TestCase;
 
 class MySQLConnectionTest extends DatabaseTestCase
 {
@@ -16,7 +15,6 @@ class MySQLConnectionTest extends DatabaseTestCase
     protected function setUp(): void
     {
         $this->config();
-        $this->setUpDatabase();
     }
 
     /**
