@@ -76,6 +76,20 @@ class DatabaseHandler
         }
     }
 
+    /**
+     * Returns a connection by name
+     * @param string $name the internally defined name
+     * @return IConnection|null
+     */
+    public function getConnection(string $name): ?IConnection
+    {
+        if (isset($this->Connections[$name])) {
+            return $this->Connections[$name];
+        } else {
+            return null;
+        }
+    }
+
     public function getActiveConnection()
     {
         return $this->Connections[$this->ConnectionPointer];
