@@ -76,6 +76,20 @@ interface IConnection
     // Getter
 
     /**
+     * Gets the saved database credentials
+     * @param string|null $index
+     * @return array|string
+     */
+    public function getCredentials(string $index = null);
+
+    /**
+     * Gets the options
+     * @param string|null $index
+     * @return array|string|null
+     */
+    public function getOptions(string $index = null);
+
+    /**
      * Gets all executed SQL queries
      * @return array
      */

@@ -32,19 +32,4 @@ class MySQLConnectionTest extends TestCase
     {
         return new SQLIterator(PDOConnection::COLUMN_SEPERATOR, PDOConnection::ALIAS_SEPERATOR);
     }
-
-    /**
-     * @small
-     */
-    public function testGetterAndSetter()
-    {
-        return;
-        // Get
-        $this->assertIsArray($this->Connection->getCredentials());
-
-        $this->assertSame($this->Connection->getCredentials('host'), $_ENV['db_host']);
-        $this->assertSame($this->Connection->getCredentials('user'), $_ENV['db_user']);
-        $this->assertSame($this->Connection->getCredentials('pass'), $_ENV['db_pass']);
-        $this->assertSame($this->Connection->getCredentials('name'), $_ENV['db_name']);
-    }
 }

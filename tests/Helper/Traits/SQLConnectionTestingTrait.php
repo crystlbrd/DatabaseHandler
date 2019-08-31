@@ -3,6 +3,7 @@
 
 namespace crystlbrd\DatabaseHandler\Tests\Helper\Traits;
 
+use crystlbrd\DatabaseHandler\Exceptions\ConnectionException;
 use crystlbrd\DatabaseHandler\Interfaces\IConnection;
 use crystlbrd\DatabaseHandler\Tests\Helper\Iterator\SQLIterator;
 
@@ -39,7 +40,16 @@ trait SQLConnectionTestingTrait
         }
     }
 
+    /**
+     * Defines the expected parameters to query translations for the select method
+     * @return SQLIterator
+     */
     abstract function expectedSelectSQLTranslations(): SQLIterator;
+
+    /**
+     * Defines the ConnectionClass
+     */
+    abstract function config(): void;
 
     /**
      * Tests IConnection::select()
@@ -50,18 +60,64 @@ trait SQLConnectionTestingTrait
      * @param array $options
      * @param string $expectedString
      */
-    public function testSelectSQLParsing(array $tables, array $columns, array $conditions, array $options, string $expectedString)
+    public function testSelectSQLParsing(array $tables, array $columns, array $conditions, array $options, string $expectedString): void
     {
         // open the connection
         $this->initConnection();
 
-        // test the set
+        // send the select request
         $this->Connection->select($tables, $columns, $conditions, $options);
+
+        // check the generated query
         self::assertSame($expectedString, $this->Connection->getLastQuery());
     }
 
     /**
-     * Defines Separators and ConnectionClass
+     * Generates a random hex value
+     * @return string
      */
-    abstract function config(): void;
+    private function getRandomHexValue(): string
+    {
+        return dechex(rand(1000000000000000, 9999999999999999));
+    }
+
+    /**
+     * Tests the getters and setters
+     */
+    public function testGetterAndSetter(): void
+    {
+        // open the connection
+        $this->initConnection();
+
+        // define some random values
+        $host = $this->getRandomHexValue();
+        $user = $this->getRandomHexValue();
+        $pass = $this->getRandomHexValue();
+        $name = $this->getRandomHexValue();
+        $order = ['col' => $this->getRandomHexValue()];
+        $group = $this->getRandomHexValue();
+
+        // set data
+        $this->Connection->setHost($host);
+        $this->Connection->setUser($user);
+        $this->Connection->setPassword($pass);
+        $this->Connection->setName($name);
+
+        $this->Connection->setOption('order', $order);
+        $this->Connection->setOption('group', $group);
+
+        // check API
+        self::assertIsArray($this->Connection->getCredentials());
+        self::assertIsArray($this->Connection->getOptions());
+
+        // get data
+        self::assertSame($host, $this->Connection->getCredentials('host'));
+        self::assertSame($user, $this->Connection->getCredentials('user'));
+        self::assertSame($name, $this->Connection->getCredentials('name'));
+        self::assertSame($pass, $this->Connection->getCredentials('pass'));
+
+        self::assertSame($order, $this->Connection->getOptions('order'));
+        self::assertSame($group, $this->Connection->getOptions('group'));
+        self::assertSame(null, $this->Connection->getOptions('something_completely_random'));
+    }
 }
