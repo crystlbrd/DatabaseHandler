@@ -2,10 +2,10 @@
 
 namespace crystlbrd\DatabaseHandler\Tests\Helper\TestCases;
 
-use crystlbrd\DatabaseHandler\Connections\MySQLConnection;
 use PDO;
+use PHPUnit\Framework\TestCase;
 
-trait DatabaseTestTrait
+class DatabaseTestCase extends TestCase
 {
     public function setUpDatabase(): void
     {
