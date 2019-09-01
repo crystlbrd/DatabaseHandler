@@ -28,8 +28,8 @@ class TableTest extends DatabaseTestCase
     }
 
     /**
-     * @author crystlbrd
      * @throws DatabaseHandlerException
+     * @author crystlbrd
      */
     public function testSelect()
     {
@@ -43,8 +43,8 @@ class TableTest extends DatabaseTestCase
     }
 
     /**
-     * @author crysltbrd
      * @throws DatabaseHandlerException
+     * @author crysltbrd
      */
     public function testGetAllColumns()
     {
@@ -68,5 +68,26 @@ class TableTest extends DatabaseTestCase
             // check
             self::assertSame($columns, $table->getAllColumns());
         }
+    }
+
+    /**
+     * @author crystlbrd
+     * @throws DatabaseHandlerException
+     */
+    public function testGetTableName()
+    {
+        $dataSet = [
+            'table1',
+            'table2'
+        ];
+
+        foreach ($dataSet as $tableName ) {
+            // load table
+            $table = $this->DatabaseHandler->load($tableName);
+
+            // check
+            self::assertSame($tableName, $table->getTableName());
+        }
+
     }
 }

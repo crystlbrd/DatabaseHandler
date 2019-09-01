@@ -98,7 +98,7 @@ class Table
         return $result;
     }
 
-    public function getAllColumns()
+    public function getAllColumns(): array
     {
         // load column definition if not already done
         if (empty($this->TableColumns)) {
@@ -106,5 +106,15 @@ class Table
         }
 
         return $this->TableColumns;
+    }
+
+    public function getTableName(): string
+    {
+        return $this->TableName;
+    }
+
+    public function getConnection(): IConnection
+    {
+        return $this->Connection;
     }
 }
