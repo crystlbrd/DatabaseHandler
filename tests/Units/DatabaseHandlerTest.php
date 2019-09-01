@@ -40,6 +40,7 @@ class DatabaseHandlerTest extends DatabaseTestCase
     }
 
     /**
+     * @author crystlbrd
      * @depends testAddConnection
      * @param DatabaseHandler $dbh
      */
@@ -58,6 +59,10 @@ class DatabaseHandlerTest extends DatabaseTestCase
         self::assertFalse($dbh->removeConnection('default'));
     }
 
+    /**
+     * @author crystlbrd
+     * @throws DatabaseHandlerException
+     */
     public function testLoad()
     {
         // init

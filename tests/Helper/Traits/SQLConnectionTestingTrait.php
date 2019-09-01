@@ -53,6 +53,7 @@ trait SQLConnectionTestingTrait
 
     /**
      * Tests IConnection::select()
+     * @author crystlbrd
      * @dataProvider expectedSelectSQLTranslations
      * @param array $tables
      * @param array $columns
@@ -83,6 +84,7 @@ trait SQLConnectionTestingTrait
 
     /**
      * Tests the getters and setters
+     * @author crystlbrd
      */
     public function testGetterAndSetter(): void
     {

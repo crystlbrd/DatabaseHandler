@@ -5,6 +5,7 @@ namespace crystlbrd\DatabaseHandler\Tests\Units;
 
 
 use crystlbrd\DatabaseHandler\DatabaseHandler;
+use crystlbrd\DatabaseHandler\Exceptions\DatabaseHandlerException;
 use crystlbrd\DatabaseHandler\Result;
 use crystlbrd\DatabaseHandler\Tests\Helper\TestCases\DatabaseTestCase;
 
@@ -26,6 +27,10 @@ class TableTest extends DatabaseTestCase
         self::assertTrue($this->DatabaseHandler->addConnection('mysql', $this->DefaultConnection));
     }
 
+    /**
+     * @author crystlbrd
+     * @throws DatabaseHandlerException
+     */
     public function testSelect()
     {
         // load table
@@ -37,6 +42,10 @@ class TableTest extends DatabaseTestCase
         self::assertInstanceOf(Result::class, $result);
     }
 
+    /**
+     * @author crysltbrd
+     * @throws DatabaseHandlerException
+     */
     public function testGetAllColumns()
     {
         $dataSet = [

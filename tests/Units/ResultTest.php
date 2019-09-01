@@ -6,6 +6,7 @@ namespace crystlbrd\DatabaseHandler\Tests\Units;
 
 use crystlbrd\DatabaseHandler\DatabaseHandler;
 use crystlbrd\DatabaseHandler\Entry;
+use crystlbrd\DatabaseHandler\Exceptions\DatabaseHandlerException;
 use crystlbrd\DatabaseHandler\Result;
 use crystlbrd\DatabaseHandler\Tests\Helper\TestCases\DatabaseTestCase;
 
@@ -27,6 +28,12 @@ class ResultTest extends DatabaseTestCase
         $this->DatabaseHandler->addConnection('default', $this->DefaultConnection);
     }
 
+    /**
+     * @author crystlbrd
+     * @param null $result
+     * @return Result|null
+     * @throws DatabaseHandlerException
+     */
     public function testFetch($result = null)
     {
         // load table
@@ -48,6 +55,10 @@ class ResultTest extends DatabaseTestCase
         return $result;
     }
 
+    /**
+     * @author crystlbrd
+     * @throws DatabaseHandlerException
+     */
     public function testFetchAll()
     {
         // load table
@@ -63,6 +74,7 @@ class ResultTest extends DatabaseTestCase
     }
 
     /**
+     * @author crystlbrd
      * @depends testFetch
      */
     public function testRewind(Result $result)
@@ -74,6 +86,10 @@ class ResultTest extends DatabaseTestCase
         $this->testFetch($result);
     }
 
+    /**
+     * @author crystlbrd
+     * @throws DatabaseHandlerException
+     */
     public function testCount()
     {
         // load table
@@ -86,12 +102,18 @@ class ResultTest extends DatabaseTestCase
         self::assertSame(5, $result->count());
     }
 
+    /**
+     * @author crystlbrd
+     */
     public function testUpdate()
     {
         # TODO
         self::markTestIncomplete();
     }
 
+    /**
+     * @author crystlbrd
+     */
     public function testDelete()
     {
         # TODO
