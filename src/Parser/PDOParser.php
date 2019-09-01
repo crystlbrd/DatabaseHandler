@@ -27,6 +27,7 @@ class PDOParser implements IParser
             $result = [];
 
             // fetch a row
+            $i = 0;
             while ($r = $data->fetch(PDO::FETCH_ASSOC)) {
                 // parse all columns
                 foreach ($r as $column => $value) {
@@ -37,11 +38,13 @@ class PDOParser implements IParser
                     list($column, $alias) = explode(PDOConnection::ALIAS_SEPERATOR, $columnString);
 
                     // save result
-                    $result[][$table][$column] = [
+                    $result[$i][$table][$column] = [
                         'value' => $value,
                         'alias' => $alias
                     ];
                 }
+
+                $i++;
             }
 
             return $result;

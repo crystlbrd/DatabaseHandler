@@ -19,9 +19,11 @@ class Result
 
     private function parseResult(array $data): array
     {
+        $result = [];
         foreach ($data as $row) {
-            $this->Data[] = new Entry($this->Table, $row);
+            $result[] = new Entry($this->Table, $row);
         }
+        return $result;
     }
 
     public function fetch()
