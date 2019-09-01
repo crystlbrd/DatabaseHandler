@@ -14,6 +14,7 @@ class MySQLConnectionTest extends DatabaseTestCase
 
     protected function setUp(): void
     {
+        parent::setUp();
         $this->config();
     }
 
