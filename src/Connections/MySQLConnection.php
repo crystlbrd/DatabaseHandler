@@ -3,10 +3,11 @@
 namespace crystlbrd\DatabaseHandler\Connections;
 
 use crystlbrd\DatabaseHandler\Exceptions\ConnectionException;
-use crystlbrd\DatabaseHandler\Exceptions\RowListException;
-use crystlbrd\DatabaseHandler\IRowList;
-use crystlbrd\DatabaseHandler\RowList\PDORowList;
+use crystlbrd\DatabaseHandler\Exceptions\ParserException;
+use crystlbrd\DatabaseHandler\Parser\PDOParser;
+use crystlbrd\Exceptionist\Environment;
 use crystlbrd\Exceptionist\ExceptionistTrait;
+use PDO;
 
 class MySQLConnection extends PDOConnection
 {
@@ -18,11 +19,11 @@ class MySQLConnection extends PDOConnection
      * @param array $columns columns to select
      * @param array $conditions conditions
      * @param array $options additional options
-     * @return IRowList
+     * @return array
      * @throws ConnectionException
-     * @throws RowListException
+     * @throws ParserException
      */
-    public function select($tables, array $columns = [], array $conditions = [], array $options = []): IRowList
+    public function select($tables, array $columns, array $conditions = [], array $options = []): array
     {
         // SELECT
         $sql = 'SELECT';
@@ -43,7 +44,35 @@ class MySQLConnection extends PDOConnection
             $sql .= $this->parseOptions($options);
         }
 
-        return new PDORowList($this, $this->execute($sql));
+        // adding end ;
+        $sql .= ';';
+
+        // execute SQL
+        $result = $this->execute($sql);
+
+        if ($result !== false) {
+            // Parse result
+            return PDOParser::parse($result);
+        } else {
+            // Throw an exception on error
+            $this->log(
+                new ConnectionException('Failed to select data from ' . json_encode($tables) . '!',
+                    // log the PDO error as an own exception
+                    new ConnectionException(
+                        json_encode(
+                            array_merge(
+                                ['query' => $this->getLastQuery()],
+                                $this->getLastError()
+                            )
+                        )
+                    )
+                ),
+                Environment::E_LEVEL_ERROR
+            );
+
+            // return an empty array if exceptions are disabled
+            return [];
+        }
     }
 
     /**
@@ -78,5 +107,35 @@ class MySQLConnection extends PDOConnection
     public function delete(string $table, array $conditions): bool
     {
         // TODO: [v1] Implement delete() method.
+    }
+
+    /**
+     * Returns the description for a table
+     * @param string $table table name
+     * @return array
+     * @throws ConnectionException
+     */
+    public function describe(string $table): array
+    {
+        // build SQL
+        $sql = 'DESCRIBE ' . $table;
+
+        // execute
+        $stm = $this->execute($sql);
+
+        // parse
+        $result = [];
+        while ($r = $stm->fetch(PDO::FETCH_ASSOC)) {
+            $result[$r['Field']] = [
+                'type' => $r['Type'],
+                'null' => $r['Null'],
+                'key' => $r['Key'],
+                'Default' => $r['Default'],
+                'Extra' => $r['Extra']
+            ];
+        }
+
+        // return
+        return $result;
     }
 }

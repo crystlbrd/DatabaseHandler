@@ -1,4 +1,4 @@
-name: CI
+name: Build and Test
 
 on: 
   push:
@@ -13,8 +13,6 @@ jobs:
     name: Build & Test
     runs-on: ubuntu-latest
     steps:
-      - name: Install Docker
-        uses: docker://php:7.3
       - name: Install Repository
         uses: actions/checkout@v1
       - name: Install Composer

@@ -5,9 +5,9 @@ namespace crystlbrd\DatabaseHandler;
 use crystlbrd\DatabaseHandler\Exceptions\ConnectionException;
 use crystlbrd\DatabaseHandler\Exceptions\DatabaseHandlerException;
 use crystlbrd\DatabaseHandler\Exceptions\TableException;
+use crystlbrd\DatabaseHandler\Interfaces\IConnection;
 use crystlbrd\Exceptionist\Environment;
 use crystlbrd\Exceptionist\ExceptionistTrait;
-use Exception;
 
 class DatabaseHandler
 {
@@ -76,6 +76,20 @@ class DatabaseHandler
         }
     }
 
+    /**
+     * Returns a connection by name
+     * @param string $name the internally defined name
+     * @return IConnection|null
+     */
+    public function getConnection(string $name): ?IConnection
+    {
+        if (isset($this->Connections[$name])) {
+            return $this->Connections[$name];
+        } else {
+            return null;
+        }
+    }
+
     public function getActiveConnection()
     {
         return $this->Connections[$this->ConnectionPointer];
@@ -102,12 +116,20 @@ class DatabaseHandler
         }
     }
 
+    /**
+     * Loads a table form the database
+     * @param string $table
+     * @return Table
+     * @throws DatabaseHandlerException
+     */
     public function load(string $table): Table
     {
         try {
             // init the table
-            return new Table($this->getActiveConnection(),
-                $table);
+            return new Table(
+                $this->getActiveConnection(),
+                $table
+            );
         } catch (TableException $e) {
             $this->log(new DatabaseHandlerException('Failed to load table ' . $table . '!', $e), Environment::E_LEVEL_ERROR);
         }

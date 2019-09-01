@@ -3,7 +3,7 @@
 namespace crystlbrd\DatabaseHandler\Connections;
 
 use crystlbrd\DatabaseHandler\Exceptions\ConnectionException;
-use crystlbrd\DatabaseHandler\IConnection;
+use crystlbrd\DatabaseHandler\Interfaces\IConnection;
 use crystlbrd\Exceptionist\Environment;
 use crystlbrd\Exceptionist\ExceptionistTrait;
 use PDO;
@@ -45,6 +45,11 @@ abstract class PDOConnection implements IConnection
     protected $PDO;
 
     /**
+     * @var array the last PDO error
+     */
+    protected $LastError = [];
+
+    /**
      * @var array SQL query history
      */
     protected $History = [];
@@ -58,6 +63,16 @@ abstract class PDOConnection implements IConnection
      * @var array Cached Parameters
      */
     protected $Parameters = [];
+
+    /**
+     * Used to separate the table name from the column name in the alias
+     */
+    public const COLUMN_SEPERATOR = '_crysbrd_dbh_pdoc_';
+
+    /**
+     * Used to separate the column name and the user defined alias
+     */
+    public const ALIAS_SEPERATOR = '_as_';
 
 
     /**
@@ -200,7 +215,7 @@ abstract class PDOConnection implements IConnection
      * @param string|null $index Set to get only one entry (host, user, pass, name)
      * @return array|string
      */
-    public function getCredentials($index = null)
+    public function getCredentials(string $index = null)
     {
         $credentials = [
             'host' => $this->Host,
@@ -213,6 +228,20 @@ abstract class PDOConnection implements IConnection
             return $credentials[$index];
         } else {
             return $credentials;
+        }
+    }
+
+    /**
+     * Gets the options
+     * @param string|null $index
+     * @return array|string|null
+     */
+    public function getOptions(string $index = null)
+    {
+        if ($index != null) {
+            return (isset($this->Options[$index]) ? $this->Options[$index] : null);
+        } else {
+            return $this->Options;
         }
     }
 
@@ -240,7 +269,7 @@ abstract class PDOConnection implements IConnection
      */
     public function getLastError(): array
     {
-        return $this->PDO->errorInfo();
+        return $this->LastError;
     }
 
     /**
@@ -265,11 +294,8 @@ abstract class PDOConnection implements IConnection
         if ($index !== false) {
             return $index;
         } else {
-            // get the next parameter index
-            $index = ':param' . $this->ParameterIndex;
-
-            // count up
-            $this->ParameterIndex++;
+            // get the next parameter index and count up
+            $index = ':param' . $this->ParameterIndex++;
 
             // save value
             $this->Parameters[$index] = $value;
@@ -287,12 +313,15 @@ abstract class PDOConnection implements IConnection
     protected function parseOperator(string $operator)
     {
         $dict_operators = [
-            '=' => ' = ',
-            '>' => ' > ',
-            '<' => ' < ',
+            '!~' => ' NOT LIKE ',
             '>=' => ' >= ',
             '<=' => ' <= ',
-            '~' => ' LIKE '
+            '=' => ' = ',
+            '!=' => ' != ',
+            '>' => ' > ',
+            '<' => ' < ',
+            '~' => ' LIKE ',
+            '!' => ' IS NOT '
         ];
 
         return (isset($dict_operators[$operator]) ? $dict_operators[$operator] : false);
@@ -418,19 +447,37 @@ abstract class PDOConnection implements IConnection
 
                 // check for AS syntax
                 if (is_int($column)) {
-                    $sql .= $label;
+                    list($table, $column) = $this->parseColumn($label);
+                    $label = $column;
                 } else {
-                    $sql .= $column . ' AS ' . $label;
+                    list($table, $column) = $this->parseColumn($column);
                 }
+
+                // Build SQL
+                $sql .= $table . '.' . $column . ' AS ' . $table . self::COLUMN_SEPERATOR . $column . self::ALIAS_SEPERATOR . $label;
 
                 $i++;
             }
         } else {
-            $sql .= '*';
+            // Empty column selection are not supported - there breaking the parsing
+            $this->log(new ConnectionException('Empty column selections are not supported!'), Environment::E_LEVEL_ERROR);
+
+            // return an empty string if exceptions are disabled
+            return '';
         }
 
         // return string
         return $sql;
+    }
+
+    /**
+     * Splits a column selector into the table and column name
+     * @param string $selector
+     * @return array
+     */
+    protected function parseColumn(string $selector): array
+    {
+        return explode('.', $selector);
     }
 
     /**
@@ -447,6 +494,9 @@ abstract class PDOConnection implements IConnection
         if (isset($conditions['or'])) {
             $i = 0;
             foreach ($conditions['or'] as $column => $value) {
+                // reset
+                $appended = false;
+
                 // append OR
                 $sql .= ($i != 0 ? ' OR ' : '');
 
@@ -473,7 +523,7 @@ abstract class PDOConnection implements IConnection
                 }
 
                 // append all AND conditions if any defined
-                if (isset($conditions['and']) && !isset($appended)) {
+                if (isset($conditions['and']) && $appended === false) {
                     $sql .= $this->parseAndConditions($conditions['and'], false);
                 }
 
@@ -601,10 +651,15 @@ abstract class PDOConnection implements IConnection
 
             // Bind all parameters
             foreach ($this->Parameters as $index => $value) {
-                $stm->bindValue($index, $value);
+                if ($value == 'NULL') {
+                    // special rule for NULL values
+                    $stm->bindValue($index, null, PDO::PARAM_INT);
+                } else {
+                    $stm->bindValue($index, $value);
+                }
 
                 // Replace parameter placeholder for internal cache
-                $sql = str_replace(' ' . $index . ' ', ' "' . $value . '" ', $sql);
+                $sql = str_replace(' ' . $index . ' ', ($value == 'NULL' ? ' NULL ' : ' "' . $value . '" '), $sql);
             }
 
             // reset parameter cache
@@ -618,6 +673,10 @@ abstract class PDOConnection implements IConnection
             if ($stm->execute()) {
                 return $stm;
             } else {
+                // save the error
+                $this->LastError = $stm->errorInfo();
+
+                // return false
                 return false;
             }
         } catch (PDOException $e) {
@@ -637,6 +696,15 @@ abstract class PDOConnection implements IConnection
         $this->History[] = $sql;
 
         // execute query and return result
-        return $this->PDO->query($sql);
+        $res = $this->PDO->query($sql);
+        if ($res) {
+            return $res;
+        } else {
+            // save error
+            $this->LastError = $this->PDO->errorInfo();
+
+            // return false
+            return false;
+        }
     }
 }
