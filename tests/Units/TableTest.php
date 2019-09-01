@@ -6,7 +6,6 @@ namespace crystlbrd\DatabaseHandler\Tests\Units;
 
 use crystlbrd\DatabaseHandler\DatabaseHandler;
 use crystlbrd\DatabaseHandler\Result;
-use crystlbrd\DatabaseHandler\Table;
 use crystlbrd\DatabaseHandler\Tests\Helper\TestCases\DatabaseTestCase;
 
 class TableTest extends DatabaseTestCase
