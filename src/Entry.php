@@ -2,11 +2,9 @@
 
 namespace crystlbrd\DatabaseHandler;
 
-use crystlbrd\DatabaseHandler\Interfaces\IConnection;
-
 class Entry
 {
-    public function __construct(IConnection $connection, array $data)
+    public function __construct(Table $connection, array $data)
     {
         # TODO [Iss3]
     }

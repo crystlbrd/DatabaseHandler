@@ -37,7 +37,7 @@ class PDOParser implements IParser
                     list($column, $alias) = explode(PDOConnection::ALIAS_SEPERATOR, $columnString);
 
                     // save result
-                    $result[$table][$column] = [
+                    $result[][$table][$column] = [
                         'value' => $value,
                         'alias' => $alias
                     ];
