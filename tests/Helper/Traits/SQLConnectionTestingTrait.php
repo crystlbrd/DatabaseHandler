@@ -47,19 +47,25 @@ trait SQLConnectionTestingTrait
     abstract function expectedSelectSQLTranslations(): SQLIterator;
 
     /**
+     * Defines the expected parameters to query translations for the insert method
+     * @return SQLIterator
+     */
+    abstract function expectedInsertSQLTranslations(): SQLIterator;
+
+    /**
      * Defines the ConnectionClass
      */
     abstract function config(): void;
 
     /**
      * Tests IConnection::select()
-     * @author crystlbrd
-     * @dataProvider expectedSelectSQLTranslations
      * @param array $tables
      * @param array $columns
      * @param array $conditions
      * @param array $options
      * @param string $expectedString
+     * @author crystlbrd
+     * @dataProvider expectedSelectSQLTranslations
      */
     public function testSelectSQLParsing(array $tables, array $columns, array $conditions, array $options, string $expectedString): void
     {
@@ -121,5 +127,25 @@ trait SQLConnectionTestingTrait
         self::assertSame($order, $this->Connection->getOptions('order'));
         self::assertSame($group, $this->Connection->getOptions('group'));
         self::assertSame(null, $this->Connection->getOptions('something_completely_random'));
+    }
+
+    /**
+     * Tests the update method
+     * @author cryslbrd
+     * @dataProvider expectedInsertSQLTranslations
+     * @param string $table
+     * @param array $data
+     * @param string $expectedString
+     */
+    public function testInsertSQLParsing(string $table, array $data, string $expectedString): void
+    {
+        // open the connection
+        $this->initConnection();
+
+        // send the select request
+        $this->Connection->insert($table, $data);
+
+        // check the generated query
+        self::assertSame($expectedString, $this->Connection->getLastQuery());
     }
 }

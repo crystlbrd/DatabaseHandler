@@ -92,10 +92,42 @@ class MySQLConnection extends PDOConnection
      * @param string $table table name
      * @param array $data columns and data to insert
      * @return int inserted ID or 0 on error
+     * @throws ConnectionException
      */
     public function insert(string $table, array $data): int
     {
-        // TODO: [v1] Implement insert() method.
+        // INSERT
+        $sql = 'INSERT INTO ' . $table . ' (';
+
+        // COLUMNS
+        $i = 0;
+        foreach ($data as $column => $value) {
+            $sql .= ($i != 0 ? ', ' : '') . $column;
+            $i++;
+        }
+
+        // VALUES
+        $sql .= ') VALUES ( ';
+
+        $i = 0;
+        foreach ($data as $column => $value) {
+            $sql .= ($i != 0 ? ' , ' : '') . $this->bindParam($value);
+            $i++;
+        }
+
+        // END
+        $sql .= ' );';
+
+        // execute
+        $result = $this->execute($sql);
+
+        // return the last inserted ID if successful
+        if ($result) {
+            return $this->getLastInsertId();
+        } else {
+            // or return 0 (false) on failure
+            return 0;
+        }
     }
 
     /**

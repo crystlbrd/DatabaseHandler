@@ -4,6 +4,8 @@ namespace crystlbrd\Exceptionist\Tests\Units\Connections;
 
 use crystlbrd\DatabaseHandler\Connections\MySQLConnection;
 use crystlbrd\DatabaseHandler\Connections\PDOConnection;
+use crystlbrd\DatabaseHandler\Tests\Helper\Iterator\InsertSQLIterator;
+use crystlbrd\DatabaseHandler\Tests\Helper\Iterator\SelectSQLIterator;
 use crystlbrd\DatabaseHandler\Tests\Helper\Iterator\SQLIterator;
 use crystlbrd\DatabaseHandler\Tests\Helper\TestCases\DatabaseTestCase;
 use crystlbrd\DatabaseHandler\Tests\Helper\Traits\SQLConnectionTestingTrait;
@@ -28,6 +30,15 @@ class MySQLConnectionTest extends DatabaseTestCase
 
     public function expectedSelectSQLTranslations()
     {
-        return new SQLIterator(PDOConnection::COLUMN_SEPERATOR, PDOConnection::ALIAS_SEPERATOR);
+        return new SelectSQLIterator(PDOConnection::COLUMN_SEPERATOR, PDOConnection::ALIAS_SEPERATOR);
+    }
+
+    /**
+     * Defines the expected parameters to query translations for the insert method
+     * @return SQLIterator
+     */
+    function expectedInsertSQLTranslations(): SQLIterator
+    {
+        return new InsertSQLIterator();
     }
 }

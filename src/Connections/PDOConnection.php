@@ -655,7 +655,7 @@ abstract class PDOConnection implements IConnection
                     // special rule for NULL values
                     $stm->bindValue($index, null, PDO::PARAM_INT);
                 } else {
-                    $stm->bindValue($index, $value);
+                    $stm->bindValue($index, $value, $this->getValueType($value));
                 }
 
                 // Replace parameter placeholder for internal cache
@@ -682,6 +682,26 @@ abstract class PDOConnection implements IConnection
         } catch (PDOException $e) {
             $this->log(new ConnectionException('Failed to execute query!', $e), Environment::E_LEVEL_ERROR);
             return false;
+        }
+    }
+
+    /**
+     * Returns the corresponding data type of the value
+     * @param mixed $value
+     * @return int
+     */
+    protected function getValueType($value): int
+    {
+        if (is_int($value)) {
+            return PDO::PARAM_INT;
+        } else if (is_string($value)) {
+            return PDO::PARAM_STR;
+        } else if (is_bool($value)) {
+            return PDO::PARAM_BOOL;
+        } else if (is_float($value)) {
+            return PDO::PARAM_INT;
+        } else {
+            return PDO::PARAM_STR;
         }
     }
 
