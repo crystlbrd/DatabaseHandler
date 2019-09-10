@@ -105,6 +105,15 @@ class Table
     }
 
     /**
+     * Returns a new empty row
+     * @return Entry
+     */
+    public function createNewRow()
+    {
+        return new Entry($this);
+    }
+
+    /**
      * Gets all tables name, even the connected
      * @return string
      */
@@ -168,6 +177,19 @@ class Table
     public function getTableName(): string
     {
         return $this->TableName;
+    }
+
+    /**
+     * Gets the primary column
+     * @return string
+     */
+    public function getPrimaryColumn(): string
+    {
+        if (!$this->TablePrimaryColumn) {
+            $this->loadTableColumns();
+        }
+
+        return $this->TablePrimaryColumn;
     }
 
     /**

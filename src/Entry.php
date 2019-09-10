@@ -24,28 +24,30 @@ class Entry
      */
     protected $Changelist = [];
 
-    public function __construct(Table $table, array $data)
+    public function __construct(Table $table, array $data = [])
     {
         // init
         $this->Table = $table;
         $this->Data = $data;
 
         // parse alias
-        foreach ($this->Data[$this->Table->getTableName()] as $column => $info) {
-            if ($info['alias'] !== $column) {
-                $this->Alias[$info['alias']] = $column;
+        if (!empty($this->Data)) {
+            foreach ($this->Data[$this->Table->getTableName()] as $column => $info) {
+                if ($info['alias'] !== $column) {
+                    $this->Alias[$info['alias']] = $column;
+                }
             }
         }
     }
 
     public function __set($name, $value)
     {
-        // try to find the column inside the primary table
-        if (isset($this->Data[$this->Table->getTableName()][$name])) {
-            $this->Changelist[$name] = $value;
-        } // try to find the column with its alias
-        else if (isset($this->Alias[$name])) {
+        // try to find the column with its alias
+        if (isset($this->Alias[$name])) {
             $this->Changelist[$this->Alias[$name]] = $value;
+        } // no definition found: just add it to the changelist as it is
+        else {
+            $this->Changelist[$name] = $value;
         }
     }
 
@@ -63,6 +65,17 @@ class Entry
         } // nothing found
         else {
             return null;
+        }
+    }
+
+    public function insert(): bool
+    {
+        $result = $this->Table->insert($this->Changelist);
+        if ($result) {
+            $this->Data[$this->Table->getTableName()][$this->Table->getPrimaryColumn()]['value'] = $result;
+            return true;
+        } else {
+            return false;
         }
     }
 

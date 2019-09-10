@@ -52,12 +52,38 @@ class EntryTest extends DatabaseTestCase
         }
     }
 
-    /**
-     * @author crystlbrd
-     */
-    public function testSet()
+    public function testInsert()
     {
-        # TODO: Waiting for update()
-        self::markTestIncomplete();
+        // load table
+        $table = $this->DatabaseHandler->load('table1');
+
+        // select the current auto_increment value
+        # TODO: make it better
+        $sql = '
+        SELECT `AUTO_INCREMENT`
+        FROM  INFORMATION_SCHEMA.TABLES
+        WHERE TABLE_SCHEMA = "' . $_ENV['db_name'] . '"
+        AND   TABLE_NAME   = "table1";';
+
+        $res = $this->DatabaseHandler->getConnection('default')->query($sql);
+        $r = $res->fetch();
+
+        $auto_increment = $r[0];
+
+        // create a new row
+        $row = $table->createNewRow();
+
+        // insert some data
+        $row->col2 = 'some_data';
+        $row->col3 = 0.234;
+
+        // insert
+        self::assertTrue($row->insert());
+
+        // check the id
+        self::assertSame(intval($auto_increment), $row->col1);
+
+        # TODO: check, if the row is actually inserted into the database
+        # TODO: test multiple inserts, not just one
     }
 }

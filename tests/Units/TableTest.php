@@ -5,6 +5,7 @@ namespace crystlbrd\DatabaseHandler\Tests\Units;
 
 
 use crystlbrd\DatabaseHandler\DatabaseHandler;
+use crystlbrd\DatabaseHandler\Entry;
 use crystlbrd\DatabaseHandler\Exceptions\DatabaseHandlerException;
 use crystlbrd\DatabaseHandler\Result;
 use crystlbrd\DatabaseHandler\Tests\Helper\TestCases\DatabaseTestCase;
@@ -122,6 +123,46 @@ class TableTest extends DatabaseTestCase
         foreach ($dataset as $set) {
             self::assertSame($set['expected'], $table->insert($set['data']));
             # TODO: test, if rows are actually inserted into the database
+        }
+    }
+
+    /**
+     * Tests the createNewRow method
+     * @throws DatabaseHandlerException
+     * @author crystlbrd
+     */
+    public function testCreateNewRow()
+    {
+        // load a table
+        $table = $this->DatabaseHandler->load('table1');
+
+        // create a new row
+        $row = $table->createNewRow();
+
+        // test the interface
+        self::assertInstanceOf(Entry::class, $row);
+    }
+
+    /**
+     * Tests the getPrimaryColumn method
+     * @author crystlbrd
+     * @throws DatabaseHandlerException
+     */
+    public function testGetPrimaryColumn()
+    {
+        // data sets
+        $dataSets = [
+            'table1' => 'col1',
+            'table2' => 'col1'
+        ];
+
+        // test
+        foreach ($dataSets as $tableName => $primaryColumn) {
+            // load the table
+            $table = $this->DatabaseHandler->load($tableName);
+
+            // test
+            self::assertSame($primaryColumn, $table->getPrimaryColumn());
         }
     }
 }
