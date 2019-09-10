@@ -95,6 +95,16 @@ class Table
     }
 
     /**
+     * Inserts data into the connection
+     * @param array $data
+     * @return int
+     */
+    public function insert(array $data)
+    {
+        return $this->Connection->insert($this->getTableName(), $data);
+    }
+
+    /**
      * Gets all tables name, even the connected
      * @return string
      */
