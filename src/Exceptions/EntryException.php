@@ -2,6 +2,6 @@
 
 namespace crystlbrd\DatabaseHandler\Exceptions;
 
-class RowException extends DatabaseHandlerException
+class EntryException extends DatabaseHandlerException
 {
 }

@@ -104,6 +104,11 @@ class Table
         return $this->Connection->insert($this->getTableName(), $data);
     }
 
+    public function update(array $data, array $conditions = [])
+    {
+        return $this->Connection->update($this->getTableName(), $data, $conditions);
+    }
+
     /**
      * Returns a new empty row
      * @return Entry

@@ -2,6 +2,8 @@
 
 namespace crystlbrd\DatabaseHandler;
 
+use crystlbrd\DatabaseHandler\Exceptions\EntryException;
+
 class Entry
 {
     /**
@@ -85,13 +87,45 @@ class Entry
         }
     }
 
-    public function update(): bool
+    /**
+     * Updates the selected entry. Data is provided directly or via __set()
+     * @param array $data
+     * @return bool
+     * @throws EntryException
+     */
+    public function update(array $data = []): bool
     {
-        # TODO [Iss3]
+        // check if data is defined, otherwise take the changelist
+        if (empty($data)) {
+            $data = $this->Changelist;
+        } else {
+            $data = array_merge($this->Changelist, $data);
+        }
+
+        // get the primary column
+        $primaryColumn = $this->Table->getPrimaryColumn();
+
+        // check for the primary value
+        if ($this->$primaryColumn) {
+            // update
+            if ($this->Table->update($data, ['and' => [$primaryColumn = $this->$primaryColumn]])) {
+                // reset the changelist
+                $this->Changelist = [];
+
+                // return true
+                return true;
+            } else {
+                // update failed
+                return false;
+            }
+        } else {
+            // primary column is not loaded. Condition can't be build.
+            throw new EntryException('Failed to update entry! Value for primary column is missing.');
+        }
     }
 
     public function delete(): bool
     {
-        # TODO [Iss3]
+        # TODO
     }
 }

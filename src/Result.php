@@ -53,11 +53,7 @@ class Result
     public function update(array $changes): bool
     {
         foreach ($this->Data as $row) {
-            foreach ($changes as $column => $value) {
-                $row->$column = $value;
-            }
-
-            if (!$row->update()) return false;
+            if (!$row->update($changes)) return false;
         }
 
         return true;
