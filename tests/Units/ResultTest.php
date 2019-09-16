@@ -52,6 +52,18 @@ class ResultTest extends DatabaseTestCase
         }
 
         self::assertSame(5, $i);
+
+        // rewind for foreach syntax
+        $result->rewind();
+
+        $i = 0;
+        foreach ($result as $entry) {
+            self::assertInstanceOf(Entry::class, $entry);
+            $i++;
+        }
+
+        self::assertSame(5, $i);
+
         return $result;
     }
 
@@ -100,6 +112,7 @@ class ResultTest extends DatabaseTestCase
 
         // check
         self::assertSame(5, $result->count());
+        self::assertSame(5, count($result));
     }
 
     /**

@@ -46,6 +46,9 @@ class EntryTest extends DatabaseTestCase
         while ($entry = $result->fetch()) {
             self::assertSame($dataSet[$i], $entry->col2);
 
+            // test count
+            self::assertCount(1, $entry);
+
             // check for not existing values
             self::assertNull($entry->col1);
             $i++;
