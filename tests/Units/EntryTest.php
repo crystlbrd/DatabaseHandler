@@ -79,11 +79,51 @@ class EntryTest extends DatabaseTestCase
 
         // insert
         self::assertTrue($row->insert());
-
         // check the id
         self::assertSame(intval($auto_increment), $row->col1);
 
         # TODO: check, if the row is actually inserted into the database
         # TODO: test multiple inserts, not just one
+    }
+
+    public function testUpdate()
+    {
+        // load table
+        $table = $this->DatabaseHandler->load('table1');
+
+        // select an entry
+        $result  = $table->select([], ['and' => ['col1' => 1]]);
+        self::assertNotFalse($result);
+        self::assertNotSame(0, $result->count());
+
+        $entry = $result->fetch();
+        self::assertNotFalse($entry);
+
+        // check values
+        self::assertSame('1', $entry->col1);
+        self::assertSame('val1.1', $entry->col2);
+        self::assertSame('0.1', $entry->col3);
+
+        // update some data
+        $entry->col2 = 'updated_value1';
+        $entry->col3 = 1337;
+
+        // update
+        self::assertTrue($entry->update(), json_encode($this->DatabaseHandler->getActiveConnection()->getLastError()));
+
+        // reload the entry and test the data again
+        // select an entry
+        $result  = $table->select([], ['and' => ['col1' => 1]]);
+        self::assertNotFalse($result);
+        self::assertNotSame(0, $result->count());
+
+        $entry = $result->fetch();
+        self::assertNotFalse($entry);
+
+        // check values
+        self::assertSame('1', $entry->col1);
+        self::assertSame('updated_value1', $entry->col2);
+        self::assertSame('1337', $entry->col3);
+
     }
 }

@@ -86,17 +86,22 @@ class MySQLConnection extends PDOConnection
     public function update(string $table, array $columns, array $conditions = []): bool
     {
         // UPDATE
-        $sql = 'UPDATE ' . $table . ' SET';
+        $sql = 'UPDATE ' . $table . ' SET ';
 
         // COLUMNS
+        $i = 0;
         foreach ($columns as $column => $value) {
-            $sql .= ' ' . $column . $this->parseValue($value);
+            $sql .= ($i != 0 ? ' , ' : '') . $column . $this->parseValue($value);
+            $i++;
         }
 
         // WHERE
         if (!empty($conditions)) {
             $sql .= ' WHERE ' . $this->parseConditions($conditions);
         }
+
+        // END
+        $sql .= ' ;';
 
         // EXECUTE
         return !!($this->execute($sql));

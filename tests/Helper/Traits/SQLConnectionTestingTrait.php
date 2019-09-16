@@ -53,6 +53,12 @@ trait SQLConnectionTestingTrait
     abstract function expectedInsertSQLTranslations(): SQLIterator;
 
     /**
+     * Defines the expected parameters to query translations for the update method
+     * @return SQLIterator
+     */
+    abstract function expectedUpdateSQLTranslations(): SQLIterator;
+
+    /**
      * Defines the ConnectionClass
      */
     abstract function config(): void;
@@ -144,6 +150,27 @@ trait SQLConnectionTestingTrait
 
         // send the select request
         $this->Connection->insert($table, $data);
+
+        // check the generated query
+        self::assertSame($expectedString, $this->Connection->getLastQuery());
+    }
+
+    /**
+     * Tests the update method
+     * @author crysltbrd
+     * @dataProvider expectedUpdateSQLTranslations
+     * @param string $table
+     * @param array $data
+     * @param array $conditions
+     * @param string $expectedString
+     */
+    public function testUpdateSQLParsing(string $table, array $data, array $conditions, string $expectedString): void
+    {
+        // open the connection
+        $this->initConnection();
+
+        // send the select request
+        $this->Connection->update($table, $data, $conditions);
 
         // check the generated query
         self::assertSame($expectedString, $this->Connection->getLastQuery());

@@ -90,7 +90,7 @@ class DatabaseHandler
         }
     }
 
-    public function getActiveConnection()
+    public function getActiveConnection(): IConnection
     {
         return $this->Connections[$this->ConnectionPointer];
     }

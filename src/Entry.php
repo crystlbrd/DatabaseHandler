@@ -106,9 +106,9 @@ class Entry
         $primaryColumn = $this->Table->getPrimaryColumn();
 
         // check for the primary value
-        if ($this->$primaryColumn) {
+        if ($primaryColumn && $this->$primaryColumn !== null) {
             // update
-            if ($this->Table->update($data, ['and' => [$primaryColumn = $this->$primaryColumn]])) {
+            if ($this->Table->update($data, ['and' => [$primaryColumn => $this->$primaryColumn]])) {
                 // reset the changelist
                 $this->Changelist = [];
 
