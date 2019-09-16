@@ -81,10 +81,25 @@ class MySQLConnection extends PDOConnection
      * @param array $columns columns and values to update
      * @param array $conditions conditions
      * @return bool
+     * @throws ConnectionException
      */
-    public function update(string $table, array $columns, array $conditions): bool
+    public function update(string $table, array $columns, array $conditions = []): bool
     {
-        // TODO: [v1] Implement update() method.
+        // UPDATE
+        $sql = 'UPDATE ' . $table . ' SET';
+
+        // COLUMNS
+        foreach ($columns as $column => $value) {
+            $sql .= ' ' . $column . $this->parseValue($value);
+        }
+
+        // WHERE
+        if (!empty($conditions)) {
+            $sql .= ' WHERE ' . $this->parseConditions($conditions);
+        }
+
+        // EXECUTE
+        return !!($this->execute($sql));
     }
 
     /**
