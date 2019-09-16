@@ -33,11 +33,17 @@ class Entry
         // parse alias
         if (!empty($this->Data)) {
             foreach ($this->Data[$this->Table->getTableName()] as $column => $info) {
+                // move data to 'self'
+                $this->Data['self'][$column] = $info;
+
                 if ($info['alias'] !== $column) {
                     $this->Alias[$info['alias']] = $column;
                 }
             }
         }
+
+        // unset table reference
+        unset($this->Data[$this->Table->getTableName()]);
     }
 
     public function __set($name, $value)
