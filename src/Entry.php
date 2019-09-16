@@ -60,8 +60,8 @@ class Entry
     public function __get($name)
     {
         // try to find the column inside the primary table
-        if (isset($this->Data[$this->Table->getTableName()][$name])) {
-            return $this->Data[$this->Table->getTableName()][$name]['value'];
+        if (isset($this->Data['self'][$name])) {
+            return $this->Data['self'][$name]['value'];
         } // try to find the column with its alias
         else if (isset($this->Alias[$name])) {
             return $this->Data[$this->Table->getTableName()][$this->Alias[$name]]['value'];
