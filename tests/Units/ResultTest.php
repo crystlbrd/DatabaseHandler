@@ -107,8 +107,7 @@ class ResultTest extends DatabaseTestCase
      */
     public function testUpdate()
     {
-        # TODO
-        self::markTestIncomplete();
+        # TODO currently just assuming, that if Entry::update() works Result::update() will too
     }
 
     /**
