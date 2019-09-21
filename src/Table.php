@@ -2,6 +2,8 @@
 
 namespace crystlbrd\DatabaseHandler;
 
+use crystlbrd\DatabaseHandler\Exceptions\ConnectionException;
+use crystlbrd\DatabaseHandler\Exceptions\TableException;
 use crystlbrd\DatabaseHandler\Interfaces\IConnection;
 
 class Table
@@ -204,5 +206,19 @@ class Table
     public function getConnection(): IConnection
     {
         return $this->Connection;
+    }
+
+    /**
+     * Deletes the table
+     * @return bool
+     * @throws TableException
+     */
+    public function delete(): bool
+    {
+        try {
+            return $this->Connection->dropTable($this->TableName);
+        } catch (ConnectionException $e) {
+            throw new TableException('Something went terribly wrong while deleting table "' . $this->TableName . '"!', $e);
+        }
     }
 }
