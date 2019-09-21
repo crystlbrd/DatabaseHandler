@@ -2,6 +2,8 @@
 
 namespace crystlbrd\DatabaseHandler\Interfaces;
 
+use crystlbrd\DatabaseHandler\Exceptions\ConnectionException;
+
 interface IConnection
 {
 
@@ -163,4 +165,20 @@ interface IConnection
      * @return array
      */
     public function describe(string $table): array;
+
+    /**
+     * Drops a database
+     * @param string $database
+     * @return bool true on success, false on error
+     * @throws ConnectionException
+     */
+    public function dropDatabase(string $database): bool;
+
+    /**
+     * Drops a table
+     * @param string $table
+     * @return bool
+     * @throws ConnectionException
+     */
+    public function dropTable(string $table): bool;
 }
