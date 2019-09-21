@@ -196,4 +196,11 @@ trait SQLConnectionTestingTrait
         // check SQL
         self::assertSame('DROP TABLE droptable123;', $this->Connection->getLastQuery());
     }
+
+    /**
+     * Tests the delete method
+     */
+    public function testDelete()
+    {
+    }
 }

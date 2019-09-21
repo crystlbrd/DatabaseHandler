@@ -155,10 +155,23 @@ class MySQLConnection extends PDOConnection
      * @param string $table table name
      * @param array $conditions conditions
      * @return bool
+     * @throws ConnectionException
      */
-    public function delete(string $table, array $conditions): bool
+    public function delete(string $table, array $conditions = []): bool
     {
-        // TODO: [v1] Implement delete() method.
+        // DELETE FROM
+        $sql = 'DELETE FROM ' . $table;
+
+        // WHERE
+        if (!empty($conditions)) {
+            $sql .= ' WHERE ' . $this->parseConditions($conditions);
+        }
+
+        // END
+        $sql .= ';';
+
+        // execute
+        return !!($this->execute($sql));
     }
 
     /**
