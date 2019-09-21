@@ -28,6 +28,10 @@ class DatabaseHandler
      */
     private $ConnectionPointer;
 
+    /**
+     * DatabaseHandler constructor.
+     * @param array $options additional options
+     */
     public function __construct(array $options = [])
     {
         // load options
@@ -36,11 +40,23 @@ class DatabaseHandler
         ]);
     }
 
+    /**
+     * Checks if there is a connection with a given name
+     * @param string $name the connection name
+     * @return bool
+     */
     public function connectionExists(string $name): bool
     {
         return isset($this->Connections[$name]);
     }
 
+    /**
+     * Adds a connection to the handler
+     * @param string $name the connection name
+     * @param IConnection $connection
+     * @return bool
+     * @throws DatabaseHandlerException
+     */
     public function addConnection(string $name, IConnection $connection): bool
     {
         // connection already defined?
@@ -57,6 +73,12 @@ class DatabaseHandler
         }
     }
 
+    /**
+     * Removes a connection by its name
+     * @param string $name the connection name
+     * @return bool
+     * @throws DatabaseHandlerException
+     */
     public function removeConnection(string $name): bool
     {
         // connection defined?
@@ -90,11 +112,21 @@ class DatabaseHandler
         }
     }
 
+    /**
+     * Returns the currently selected connections
+     * @return IConnection
+     */
     public function getActiveConnection(): IConnection
     {
         return $this->Connections[$this->ConnectionPointer];
     }
 
+    /**
+     * Selects a connection
+     * @param string $name the connection name
+     * @return bool
+     * @throws \Exception
+     */
     public function use(string $name): bool
     {
         // Connection defined?

@@ -33,6 +33,11 @@ class Entry implements Iterator, Countable
      */
     protected $Changelist = [];
 
+    /**
+     * Entry constructor.
+     * @param Table $table
+     * @param array $data
+     */
     public function __construct(Table $table, array $data = [])
     {
         // init
@@ -55,6 +60,11 @@ class Entry implements Iterator, Countable
         unset($this->Data[$this->Table->getTableName()]);
     }
 
+    /**
+     * Sets a property
+     * @param $name
+     * @param $value
+     */
     public function __set($name, $value)
     {
         // try to find the column with its alias
@@ -66,6 +76,11 @@ class Entry implements Iterator, Countable
         }
     }
 
+    /**
+     * Gets a fetched property
+     * @param $name
+     * @return Entry|null
+     */
     public function __get($name)
     {
         // try to find the column inside the primary table
@@ -83,6 +98,10 @@ class Entry implements Iterator, Countable
         }
     }
 
+    /**
+     * Inserts all provided data into the database
+     * @return bool
+     */
     public function insert(): bool
     {
         $result = $this->Table->insert($this->Changelist);

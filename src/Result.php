@@ -13,6 +13,11 @@ class Result implements Iterator, Countable
 
     protected $Pointer = 0;
 
+    /**
+     * Result constructor.
+     * @param Table $table
+     * @param array $result
+     */
     public function __construct(Table $table, array $result)
     {
         // init
@@ -20,6 +25,11 @@ class Result implements Iterator, Countable
         $this->Data = $this->parseResult($result);
     }
 
+    /**
+     * Parses provided data and saves it internally for later use
+     * @param array $data
+     * @return array
+     */
     private function parseResult(array $data): array
     {
         $result = [];
@@ -29,6 +39,10 @@ class Result implements Iterator, Countable
         return $result;
     }
 
+    /**
+     * Fetches an entry from the result
+     * @return bool|mixed
+     */
     public function fetch()
     {
         if ($this->valid()) {
@@ -40,16 +54,29 @@ class Result implements Iterator, Countable
         }
     }
 
+    /**
+     * Fetches all entries from the result
+     * @return array
+     */
     public function fetchAll()
     {
         return $this->Data;
     }
 
-    public function count()
+    /**
+     * Counts the amount of entries
+     * @return int
+     */
+    public function count(): int
     {
         return count($this->Data);
     }
 
+    /**
+     * Updates all entries with the provided data
+     * @param array $changes
+     * @return bool
+     */
     public function update(array $changes): bool
     {
         foreach ($this->Data as $row) {
@@ -59,6 +86,10 @@ class Result implements Iterator, Countable
         return true;
     }
 
+    /**
+     * Deletes all entries from the data source
+     * @return bool
+     */
     public function delete(): bool
     {
         foreach ($this->Data as $row) {
@@ -68,7 +99,7 @@ class Result implements Iterator, Countable
         return true;
     }
 
-    /* *** Iterator Stubs *** +/
+    /* *** Iterator Stubs *** */
 
     /**
      * Return the current element
