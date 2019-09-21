@@ -137,11 +137,11 @@ trait SQLConnectionTestingTrait
 
     /**
      * Tests the update method
-     * @author cryslbrd
-     * @dataProvider expectedInsertSQLTranslations
      * @param string $table
      * @param array $data
      * @param string $expectedString
+     * @author cryslbrd
+     * @dataProvider expectedInsertSQLTranslations
      */
     public function testInsertSQLParsing(string $table, array $data, string $expectedString): void
     {
@@ -157,12 +157,12 @@ trait SQLConnectionTestingTrait
 
     /**
      * Tests the update method
-     * @author crysltbrd
-     * @dataProvider expectedUpdateSQLTranslations
      * @param string $table
      * @param array $data
      * @param array $conditions
      * @param string $expectedString
+     * @author crysltbrd
+     * @dataProvider expectedUpdateSQLTranslations
      */
     public function testUpdateSQLParsing(string $table, array $data, array $conditions, string $expectedString): void
     {
@@ -174,5 +174,26 @@ trait SQLConnectionTestingTrait
 
         // check the generated query
         self::assertSame($expectedString, $this->Connection->getLastQuery());
+    }
+
+    /**
+     * Test the DROP methods
+     */
+    public function testDropSQLParsing()
+    {
+        // open the connection
+        $this->initConnection();
+
+        // drop database
+        $this->Connection->dropDatabase('dropdatabase123');
+
+        // check SQL
+        self::assertSame('DROP DATABASE dropdatabase123;', $this->Connection->getLastQuery());
+
+        // drop table
+        $this->Connection->dropTable('droptable123');
+
+        // check SQL
+        self::assertSame('DROP TABLE droptable123;', $this->Connection->getLastQuery());
     }
 }

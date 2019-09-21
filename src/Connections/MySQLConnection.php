@@ -190,4 +190,33 @@ class MySQLConnection extends PDOConnection
         // return
         return $result;
     }
+
+    /**
+     * Drops a database
+     * @param string $database
+     * @return bool true on success, false on error
+     * @throws ConnectionException
+     */
+    public function dropDatabase(string $database): bool
+    {
+        // DROP DATABASE
+        $sql = 'DROP DATABASE ' . $database . ';';
+
+        return !!($this->execute($sql));
+    }
+
+    /**
+     * Drops a table
+     * @param string $table
+     * @return bool
+     * @throws ConnectionException
+     */
+    public function dropTable(string $table): bool
+    {
+        // DROP TABLE
+        $sql = 'DROP TABLE ' . $table . ';';
+
+        // execute
+        return !!($this->execute($sql));
+    }
 }
