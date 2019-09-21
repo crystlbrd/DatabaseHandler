@@ -40,9 +40,9 @@ class DatabaseHandlerTest extends DatabaseTestCase
     }
 
     /**
+     * @param DatabaseHandler $dbh
      * @author crystlbrd
      * @depends testAddConnection
-     * @param DatabaseHandler $dbh
      */
     public function testRemoveConnection(DatabaseHandler $dbh): void
     {
@@ -60,8 +60,8 @@ class DatabaseHandlerTest extends DatabaseTestCase
     }
 
     /**
-     * @author crystlbrd
      * @throws DatabaseHandlerException
+     * @author crystlbrd
      */
     public function testLoad()
     {
@@ -78,5 +78,38 @@ class DatabaseHandlerTest extends DatabaseTestCase
         // try to load another table
         $table2 = $dbh->load('table2');
         self::assertInstanceOf(Table::class, $table2);
+    }
+
+    public function testDeleteTable()
+    {
+        // init DatabaseHandler
+        $dbh = new DatabaseHandler();
+
+        // add a connection
+        $dbh->addConnection('test', $this->DefaultConnection);
+
+        // try to delete a table
+        self::assertTrue($dbh->deleteTable('table2'), json_encode($dbh->getLastError()));
+
+        // check, if the table actually is deleted
+        $sql = '
+        SELECT table_name
+        FROM information_schema.tables
+        WHERE table_schema = "' . $_ENV['db_name'] . '" 
+            AND table_name = "table2"
+        LIMIT 1;';
+
+        $res = $dbh->getActiveConnection()->query($sql);
+        self::assertNotFalse($res);
+        self::assertCount(0, $res->fetchAll());
+    }
+
+    /**
+     * Tests the deleteDatabase method
+     */
+    public function testDeleteDatabase()
+    {
+        # TODO
+        self::markTestIncomplete();
     }
 }
