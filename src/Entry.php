@@ -33,6 +33,7 @@ class Entry implements Iterator, Countable
      */
     protected $Changelist = [];
 
+  
     /**
      * Entry constructor.
      * @param Table $table
