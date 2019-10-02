@@ -211,14 +211,20 @@ class Table
     /**
      * Deletes the table
      * @return bool
-     * @throws TableException
+     * @throws ConnectionException
      */
-    public function delete(): bool
+    public function drop(): bool
     {
-        try {
-            return $this->Connection->dropTable($this->TableName);
-        } catch (ConnectionException $e) {
-            throw new TableException('Something went terribly wrong while deleting table "' . $this->TableName . '"!', $e);
-        }
+        return $this->Connection->dropTable($this->TableName);
+    }
+
+    /**
+     * Deletes a row from the table
+     * @param array $conditions
+     * @return bool
+     */
+    public function delete(array $conditions = []): bool
+    {
+        return $this->Connection->delete($this->TableName, $conditions);
     }
 }

@@ -150,9 +150,22 @@ class Entry implements Iterator, Countable
         }
     }
 
+    /**
+     * Deletes the entry from the data source
+     * @return bool
+     * @throws EntryException
+     * @throws Exceptions\TableException
+     */
     public function delete(): bool
     {
-        # TODO
+        // check, if the primary column is loaded
+        $pkCol = $this->Table->getPrimaryColumn();
+        if ($pkCol && $this->$pkCol != null) {
+            return $this->Table->drop(['and' => [$pkCol => $this->$pkCol]]);
+        } else {
+            // primary column is not loaded. Deleting is not save
+            throw new EntryException('Failed to delete entry! Value for primary column is missing.');
+        }
     }
 
     /* *** Iterator Stubs *** */
