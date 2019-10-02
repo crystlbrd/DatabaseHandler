@@ -28,6 +28,10 @@ class DatabaseHandler
      */
     private $ConnectionPointer;
 
+    /**
+     * DatabaseHandler constructor.
+     * @param array $options additional options
+     */
     public function __construct(array $options = [])
     {
         // load options
@@ -36,11 +40,23 @@ class DatabaseHandler
         ]);
     }
 
+    /**
+     * Checks if there is a connection with a given name
+     * @param string $name the connection name
+     * @return bool
+     */
     public function connectionExists(string $name): bool
     {
         return isset($this->Connections[$name]);
     }
 
+    /**
+     * Adds a connection to the handler
+     * @param string $name the connection name
+     * @param IConnection $connection
+     * @return bool
+     * @throws DatabaseHandlerException
+     */
     public function addConnection(string $name, IConnection $connection): bool
     {
         // connection already defined?
@@ -57,6 +73,12 @@ class DatabaseHandler
         }
     }
 
+    /**
+     * Removes a connection by its name
+     * @param string $name the connection name
+     * @return bool
+     * @throws DatabaseHandlerException
+     */
     public function removeConnection(string $name): bool
     {
         // connection defined?
@@ -90,11 +112,21 @@ class DatabaseHandler
         }
     }
 
-    public function getActiveConnection()
+    /**
+     * Returns the currently selected connections
+     * @return IConnection
+     */
+    public function getActiveConnection(): IConnection
     {
         return $this->Connections[$this->ConnectionPointer];
     }
 
+    /**
+     * Selects a connection
+     * @param string $name the connection name
+     * @return bool
+     * @throws \Exception
+     */
     public function use(string $name): bool
     {
         // Connection defined?
@@ -120,18 +152,52 @@ class DatabaseHandler
      * Loads a table form the database
      * @param string $table
      * @return Table
-     * @throws DatabaseHandlerException
      */
     public function load(string $table): Table
     {
+        // init the table
+        return new Table(
+            $this->getActiveConnection(),
+            $table
+        );
+    }
+
+    /**
+     * Deltes a  database from the currently selected connection
+     * @param string $database
+     * @return bool true on success, false on failure
+     * @throws DatabaseHandlerException
+     */
+    public function deleteDatabase(string $database): bool
+    {
         try {
-            // init the table
-            return new Table(
-                $this->getActiveConnection(),
-                $table
-            );
-        } catch (TableException $e) {
-            $this->log(new DatabaseHandlerException('Failed to load table ' . $table . '!', $e), Environment::E_LEVEL_ERROR);
+            return $this->getActiveConnection()->dropDatabase($database);
+        } catch (ConnectionException $e) {
+            $this->log(new DatabaseHandlerException('Something went terribly wrong while deleting the database "' . $database . '"!', $e), Environment::E_LEVEL_ERROR);
         }
+    }
+
+    /**
+     * Deletes a table from the currently selected connection
+     * @param string $table
+     * @return bool true on success, false on failure
+     * @throws DatabaseHandlerException
+     */
+    public function deleteTable(string $table): bool
+    {
+        try {
+            return $this->getActiveConnection()->dropTable($table);
+        } catch (ConnectionException $e) {
+            $this->log(new DatabaseHandlerException('Something went terribly wrong while deleting the table "' . $table . '"!', $e), Environment::E_LEVEL_ERROR);
+        }
+    }
+
+    /**
+     * Returns the last error of the currently active connection
+     * @return mixed
+     */
+    public function getLastError()
+    {
+        return $this->getActiveConnection()->getLastError();
     }
 }

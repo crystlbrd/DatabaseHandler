@@ -81,10 +81,30 @@ class MySQLConnection extends PDOConnection
      * @param array $columns columns and values to update
      * @param array $conditions conditions
      * @return bool
+     * @throws ConnectionException
      */
-    public function update(string $table, array $columns, array $conditions): bool
+    public function update(string $table, array $columns, array $conditions = []): bool
     {
-        // TODO: [v1] Implement update() method.
+        // UPDATE
+        $sql = 'UPDATE ' . $table . ' SET ';
+
+        // COLUMNS
+        $i = 0;
+        foreach ($columns as $column => $value) {
+            $sql .= ($i != 0 ? ' , ' : '') . $column . $this->parseValue($value);
+            $i++;
+        }
+
+        // WHERE
+        if (!empty($conditions)) {
+            $sql .= ' WHERE ' . $this->parseConditions($conditions);
+        }
+
+        // END
+        $sql .= ' ;';
+
+        // EXECUTE
+        return !!($this->execute($sql));
     }
 
     /**
@@ -92,10 +112,42 @@ class MySQLConnection extends PDOConnection
      * @param string $table table name
      * @param array $data columns and data to insert
      * @return int inserted ID or 0 on error
+     * @throws ConnectionException
      */
     public function insert(string $table, array $data): int
     {
-        // TODO: [v1] Implement insert() method.
+        // INSERT
+        $sql = 'INSERT INTO ' . $table . ' (';
+
+        // COLUMNS
+        $i = 0;
+        foreach ($data as $column => $value) {
+            $sql .= ($i != 0 ? ', ' : '') . $column;
+            $i++;
+        }
+
+        // VALUES
+        $sql .= ') VALUES ( ';
+
+        $i = 0;
+        foreach ($data as $column => $value) {
+            $sql .= ($i != 0 ? ' , ' : '') . $this->bindParam($value);
+            $i++;
+        }
+
+        // END
+        $sql .= ' );';
+
+        // execute
+        $result = $this->execute($sql);
+
+        // return the last inserted ID if successful
+        if ($result) {
+            return $this->getLastInsertId();
+        } else {
+            // or return 0 (false) on failure
+            return 0;
+        }
     }
 
     /**
@@ -103,10 +155,23 @@ class MySQLConnection extends PDOConnection
      * @param string $table table name
      * @param array $conditions conditions
      * @return bool
+     * @throws ConnectionException
      */
-    public function delete(string $table, array $conditions): bool
+    public function delete(string $table, array $conditions = []): bool
     {
-        // TODO: [v1] Implement delete() method.
+        // DELETE FROM
+        $sql = 'DELETE FROM ' . $table;
+
+        // WHERE
+        if (!empty($conditions)) {
+            $sql .= ' WHERE ' . $this->parseConditions($conditions);
+        }
+
+        // END
+        $sql .= ';';
+
+        // execute
+        return !!($this->execute($sql));
     }
 
     /**
@@ -137,5 +202,34 @@ class MySQLConnection extends PDOConnection
 
         // return
         return $result;
+    }
+
+    /**
+     * Drops a database
+     * @param string $database
+     * @return bool true on success, false on error
+     * @throws ConnectionException
+     */
+    public function dropDatabase(string $database): bool
+    {
+        // DROP DATABASE
+        $sql = 'DROP DATABASE ' . $database . ';';
+
+        return !!($this->execute($sql));
+    }
+
+    /**
+     * Drops a table
+     * @param string $table
+     * @return bool
+     * @throws ConnectionException
+     */
+    public function dropTable(string $table): bool
+    {
+        // DROP TABLE
+        $sql = 'DROP TABLE ' . $table . ';';
+
+        // execute
+        return !!($this->execute($sql));
     }
 }

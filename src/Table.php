@@ -2,23 +2,42 @@
 
 namespace crystlbrd\DatabaseHandler;
 
+use crystlbrd\DatabaseHandler\Exceptions\ConnectionException;
+use crystlbrd\DatabaseHandler\Exceptions\TableException;
 use crystlbrd\DatabaseHandler\Interfaces\IConnection;
 
 class Table
 {
     /**
-     * @var IConnection
+     * @var IConnection selected connection
      */
     private $Connection;
 
+    /**
+     * @var string table name
+     */
     private $TableName;
 
+    /**
+     * @var array table structure
+     */
     private $TableDefinition = [];
 
+    /**
+     * @var string primary column name
+     */
     private $TablePrimaryColumn;
 
+    /**
+     * @var array a list of the column names
+     */
     private $TableColumns = [];
 
+    /**
+     * Table constructor.
+     * @param IConnection $connection connection to use
+     * @param string $table table name
+     */
     public function __construct(IConnection $connection, string $table)
     {
         // Init
@@ -26,12 +45,18 @@ class Table
         $this->TableName = $table;
     }
 
-    private function loadTableDefinition()
+    /**
+     * gets the table structure from the connection
+     */
+    private function loadTableDefinition(): void
     {
         $this->TableDefinition = $this->Connection->describe($this->TableName);
     }
 
-    private function loadTableColumns()
+    /**
+     * Extracts the column name out of the structure definition
+     */
+    private function loadTableColumns(): void
     {
         // load table definition, if not already done
         if (empty($this->TableDefinition)) {
@@ -58,17 +83,57 @@ class Table
         // TODO: Implement join()
     }
 
+    /**
+     * Selects data from the connection
+     * @param array $columns
+     * @param array $conditions
+     * @param array $options
+     * @return Result
+     */
     public function select(array $columns = [], array $conditions = [], array $options = []): Result
     {
         $result = $this->Connection->select($this->getTables(), $this->parseColumns($columns), $conditions, $options);
         return new Result($this, $result);
     }
 
+    /**
+     * Inserts data into the connection
+     * @param array $data
+     * @return int
+     */
+    public function insert(array $data)
+    {
+        return $this->Connection->insert($this->getTableName(), $data);
+    }
+
+    public function update(array $data, array $conditions = [])
+    {
+        return $this->Connection->update($this->getTableName(), $data, $conditions);
+    }
+
+    /**
+     * Returns a new empty row
+     * @return Entry
+     */
+    public function createNewRow()
+    {
+        return new Entry($this);
+    }
+
+    /**
+     * Gets all tables name, even the connected
+     * @return string
+     */
     private function getTables(): string
     {
         return $this->TableName;
     }
 
+    /**
+     * Prepares and unifies the column identifier
+     * @param array $columns
+     * @return array
+     */
     private function parseColumns(array $columns): array
     {
         $result = [];
@@ -98,6 +163,10 @@ class Table
         return $result;
     }
 
+    /**
+     * Gets the column list
+     * @return array
+     */
     public function getAllColumns(): array
     {
         // load column definition if not already done
@@ -108,13 +177,54 @@ class Table
         return $this->TableColumns;
     }
 
+    /**
+     * Gets the table name
+     * @return string
+     */
     public function getTableName(): string
     {
         return $this->TableName;
     }
 
+    /**
+     * Gets the primary column
+     * @return string
+     */
+    public function getPrimaryColumn(): string
+    {
+        if (!$this->TablePrimaryColumn) {
+            $this->loadTableColumns();
+        }
+
+        return $this->TablePrimaryColumn;
+    }
+
+    /**
+     * Gets the connection
+     * @return IConnection
+     */
     public function getConnection(): IConnection
     {
         return $this->Connection;
+    }
+
+    /**
+     * Deletes the table
+     * @return bool
+     * @throws ConnectionException
+     */
+    public function drop(): bool
+    {
+        return $this->Connection->dropTable($this->TableName);
+    }
+
+    /**
+     * Deletes a row from the table
+     * @param array $conditions
+     * @return bool
+     */
+    public function delete(array $conditions = []): bool
+    {
+        return $this->Connection->delete($this->TableName, $conditions);
     }
 }
