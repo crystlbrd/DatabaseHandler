@@ -1,6 +1,7 @@
 {
     "name": "crystlbrd/databasehandler",
     "description": "A simple abstraction layer for database manipulation",
+    "license": "MIT",
     "type": "library",
     "require": {
         "php": ">=7.3",
