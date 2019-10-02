@@ -154,7 +154,7 @@ class Entry implements Iterator, Countable
      * Deletes the entry from the data source
      * @return bool
      * @throws EntryException
-     * @throws Exceptions\TableException
+     * @throws Exceptions\ConnectionException
      */
     public function delete(): bool
     {
