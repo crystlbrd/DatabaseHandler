@@ -4,7 +4,6 @@
     "license": "MIT",
     "type": "library",
     "require": {
-        "php": ">=7.3",
         "ext-pdo": "*",
         "crystlbrd/exceptionist": "v1.1.0",
       "ext-json": "*"
