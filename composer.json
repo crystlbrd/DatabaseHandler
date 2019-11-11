@@ -5,7 +5,7 @@
     "type": "library",
     "require": {
         "ext-pdo": "*",
-        "crystlbrd/exceptionist": "v1.1.0",
+        "crystlbrd/exceptionist": "dev-master",
       "ext-json": "*"
     },
     "autoload": {
