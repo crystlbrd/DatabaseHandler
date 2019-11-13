@@ -332,7 +332,7 @@ abstract class PDOConnection implements IConnection
      * @param string $value The value mixed with the operator
      * @return string
      */
-    protected function parseValue(string $value): string
+    protected function parseValue($value): string
     {
         // Try to detect complex syntax
         $e = explode('{{', $value);
