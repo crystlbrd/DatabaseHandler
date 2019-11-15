@@ -7,6 +7,7 @@ use crystlbrd\DatabaseHandler\Exceptions\ParserException;
 use crystlbrd\DatabaseHandler\Parser\PDOParser;
 use crystlbrd\Exceptionist\Environment;
 use crystlbrd\Exceptionist\ExceptionistTrait;
+use Exception;
 use PDO;
 
 class MySQLConnection extends PDOConnection
@@ -189,19 +190,26 @@ class MySQLConnection extends PDOConnection
         $stm = $this->execute($sql);
 
         // parse
-        $result = [];
-        while ($r = $stm->fetch(PDO::FETCH_ASSOC)) {
-            $result[$r['Field']] = [
-                'type' => $r['Type'],
-                'null' => $r['Null'],
-                'key' => $r['Key'],
-                'Default' => $r['Default'],
-                'Extra' => $r['Extra']
-            ];
-        }
+        if ($stm) {
+            $result = [];
+            while ($r = $stm->fetch(PDO::FETCH_ASSOC)) {
+                $result[$r['Field']] = [
+                    'type' => $r['Type'],
+                    'null' => $r['Null'],
+                    'key' => $r['Key'],
+                    'Default' => $r['Default'],
+                    'Extra' => $r['Extra']
+                ];
+            }
 
-        // return
-        return $result;
+            // return
+            return $result;
+        } else {
+            throw new ConnectionException(
+                'Failed to load description for "' . $table . '"!',
+                new Exception(json_encode($this->getLastError()))
+            );
+        }
     }
 
     /**
