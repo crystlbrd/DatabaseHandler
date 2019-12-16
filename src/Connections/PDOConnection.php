@@ -274,12 +274,11 @@ abstract class PDOConnection implements IConnection
 
     /**
      * Gets last inserted ID
-     * @return int
+     * @return mixed
      */
-    public function getLastInsertId(): int
+    public function getLastInsertId()
     {
-        $id = $this->PDO->lastInsertId();
-        return intval($id);
+        return $this->PDO->lastInsertId();
     }
 
     /**
