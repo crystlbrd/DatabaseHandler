@@ -111,9 +111,9 @@ interface IConnection
 
     /**
      * Gets last inserted ID
-     * @return int
+     * @return mixed
      */
-    public function getLastInsertId(): int;
+    public function getLastInsertId();
 
     // Database manipulation
 
