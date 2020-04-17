@@ -33,7 +33,7 @@ class Entry implements Iterator, Countable
      */
     protected $Changelist = [];
 
-  
+
     /**
      * Entry constructor.
      * @param Table $table
@@ -89,7 +89,7 @@ class Entry implements Iterator, Countable
             return $this->Data['self'][$name]['value'];
         } // try to find the column with its alias
         else if (isset($this->Alias[$name])) {
-            return $this->Data[$this->Table->getTableName()][$this->Alias[$name]]['value'];
+            return $this->Data['self'][$this->Alias[$name]]['value'];
         } // check, if there is a connected table with that name
         else if (isset($this->Data[$name])) {
             return new Entry(new Table($this->Table->getConnection(), $name), [$name => $this->Data[$name]]);
