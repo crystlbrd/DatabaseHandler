@@ -3,8 +3,6 @@
 
 namespace crystlbrd\DatabaseHandler\Tests\Units\Connections;
 
-
-use crystlbrd\DatabaseHandler\Connections\MySQLConnection;
 use crystlbrd\DatabaseHandler\Connections\PDOConnection;
 use crystlbrd\DatabaseHandler\Tests\Helper\Iterator\InsertSQLIterator;
 use crystlbrd\DatabaseHandler\Tests\Helper\Iterator\SelectSQLIterator;
@@ -14,6 +12,10 @@ use crystlbrd\DatabaseHandler\Tests\Helper\Traits\SQLConnectionTestingTrait;
 use crystlbrd\DatabaseHandler\Tests\Mocks\TestingMySQLConnection;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * Tests, if the SQL is correctly generated
+ * @package crystlbrd\DatabaseHandler\Tests\Units\Connections
+ */
 class MysqlConnectionTest extends TestCase
 {
     use SQLConnectionTestingTrait;
