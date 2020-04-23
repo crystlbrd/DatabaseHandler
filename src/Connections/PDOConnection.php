@@ -90,8 +90,7 @@ abstract class PDOConnection implements IConnection
         // save options and defaults
         $this->Options = array_merge([
             'encoding' => 'utf8mb4',
-            'port' => 3306,
-            'reporting' => Environment::E_LEVEL_ERROR
+            'port' => 3306
         ], $options);
     }
 
