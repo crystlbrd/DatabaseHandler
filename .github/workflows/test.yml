@@ -15,9 +15,9 @@ jobs:
     steps:
       - name: Install Repository
         uses: actions/checkout@v1
-      - name: Install Composer
-        run: curl https://getcomposer.org/installer | php
       - name: Install Dependencies 
-        run: php composer.phar install
+        run: composer install
+      - name: Setup Testing DB
+        run: composer run-script setup-testdb
       - name: Run Tests
         run: php vendor/bin/phpunit

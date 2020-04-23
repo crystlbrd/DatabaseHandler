@@ -202,5 +202,6 @@ trait SQLConnectionTestingTrait
      */
     public function testDelete()
     {
+        $this->markTestIncomplete();
     }
 }

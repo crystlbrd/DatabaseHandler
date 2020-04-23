@@ -89,14 +89,14 @@ class DatabaseHandlerTest extends DatabaseTestCase
         $dbh->addConnection('test', $this->DefaultConnection);
 
         // try to delete a table
-        self::assertTrue($dbh->deleteTable('table2'), json_encode($dbh->getLastError()));
+        self::assertTrue($dbh->deleteTable('table_b'), json_encode($dbh->getLastError()));
 
         // check, if the table actually is deleted
         $sql = '
         SELECT table_name
         FROM information_schema.tables
         WHERE table_schema = "' . $_ENV['db_name'] . '" 
-            AND table_name = "table2"
+            AND table_name = "table_b"
         LIMIT 1;';
 
         $res = $dbh->getActiveConnection()->query($sql);

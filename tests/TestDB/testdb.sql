@@ -8,9 +8,20 @@ SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
 
 -- -----------------------------------------------------
+-- Schema testdb
+-- -----------------------------------------------------
+
+-- -----------------------------------------------------
+-- Schema testdb
+-- -----------------------------------------------------
+DROP SCHEMA `testdb`;
+CREATE SCHEMA IF NOT EXISTS `testdb` ;
+USE `testdb` ;
+
+-- -----------------------------------------------------
 -- Table `testdb`.`table_a`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `table_a` (
+CREATE TABLE IF NOT EXISTS `testdb`.`table_a` (
   `a_id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `a_col1` VARCHAR(45) NOT NULL,
   `a_col2` INT NULL,
@@ -22,19 +33,15 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `table_b`
+-- Table `testdb`.`table_b`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `table_b` (
+CREATE TABLE IF NOT EXISTS `testdb`.`table_b` (
   `b_id` INT NOT NULL AUTO_INCREMENT,
   `b_col1` VARCHAR(45) NULL,
   `ref_a` INT UNSIGNED NULL,
   PRIMARY KEY (`b_id`),
-  INDEX `fk_table_b_1_idx` (`ref_a` ASC) VISIBLE,
-  CONSTRAINT `fk_table_b_1`
-    FOREIGN KEY (`ref_a`)
-    REFERENCES `table_a` (`a_id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+  FOREIGN KEY (`ref_a`)
+      REFERENCES `testdb`.`table_a` (`a_id`))
 ENGINE = InnoDB;
 
 
@@ -43,22 +50,22 @@ SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 
 -- -----------------------------------------------------
--- Data for table `table_a`
+-- Data for table `testdb`.`table_a`
 -- -----------------------------------------------------
 START TRANSACTION;
 USE `testdb`;
-INSERT INTO `table_a` (`a_id`, `a_col1`, `a_col2`, `a_col3`, `a_col4`, `a_col5`) VALUES (1, 'some value', 42, 'lorem ipsum dolor sit amet', 3.41, '2020-02-23 12:34:35');
-INSERT INTO `table_a` (`a_id`, `a_col1`, `a_col2`, `a_col3`, `a_col4`, `a_col5`) VALUES (2, 'some more values', 13, 'I have no idea what to wright', 542.12341, '1904-12-23 23:54:22');
+INSERT INTO `testdb`.`table_a` (`a_id`, `a_col1`, `a_col2`, `a_col3`, `a_col4`, `a_col5`) VALUES (1, 'some value', 42, 'lorem ipsum dolor sit amet', 3.41, '2020-02-23 12:34:35');
+INSERT INTO `testdb`.`table_a` (`a_id`, `a_col1`, `a_col2`, `a_col3`, `a_col4`, `a_col5`) VALUES (2, 'some more values', 13, 'I have no idea what to wright', 542.12341, '1904-12-23 23:54:22');
 
 COMMIT;
 
 
 -- -----------------------------------------------------
--- Data for table `table_b`
+-- Data for table `testdb`.`table_b`
 -- -----------------------------------------------------
 START TRANSACTION;
 USE `testdb`;
-INSERT INTO `table_b` (`b_id`, `b_col1`, `ref_a`) VALUES (1, 'some cool value', 1);
+INSERT INTO `testdb`.`table_b` (`b_id`, `b_col1`, `ref_a`) VALUES (1, 'some cool value', 1);
 
 COMMIT;
 

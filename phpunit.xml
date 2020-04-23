@@ -8,10 +8,10 @@
         <env name="db_host" value="localhost" />
         <env name="db_user" value="root" />
         <env name="db_pass" value="root" />
-        <env name="db_name" value="test_databasehandler" />
+        <env name="db_name" value="testdb" />
     </php>
 
-    <!-- TESTSUITES -->
+    <!-- TEST SUITES -->
     <testsuites>
         <testsuite name="units">
             <directory>tests/Units/</directory>
