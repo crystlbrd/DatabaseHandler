@@ -5,15 +5,12 @@ namespace crystlbrd\DatabaseHandler\Connections;
 use crystlbrd\DatabaseHandler\Exceptions\ConnectionException;
 use crystlbrd\DatabaseHandler\Interfaces\IConnection;
 use crystlbrd\Exceptionist\Environment;
-use crystlbrd\Exceptionist\ExceptionistTrait;
 use PDO;
 use PDOException;
 use PDOStatement;
 
 abstract class PDOConnection implements IConnection
 {
-    use ExceptionistTrait;
-
     /**
      * @var string host
      */
@@ -129,14 +126,10 @@ abstract class PDOConnection implements IConnection
                 // we are happy and returning true
                 return true;
             } catch (PDOException $e) {
-                $this->log(new ConnectionException('Failed to connect to database!', $e), Environment::E_LEVEL_ERROR);
-                return false;
+                throw new ConnectionException('Failed to connect to database!', ConnectionException::EXCP_CODE_CONNECTION_FAILED, $e);
             }
         } else {
-            // just log the info
-            $this->log(new ConnectionException('Connection already opened.'), Environment::E_LEVEL_DEBUG);
-
-            // but it's not an error, so return true
+            // since the connection is already defined just return a happy true
             return true;
         }
     }
@@ -416,12 +409,12 @@ abstract class PDOConnection implements IConnection
                     $sql .= ' ON ' . $table . '.' . $data['on'];
                 } else {
                     // Malformed array
-                    $this->log(new ConnectionException('Invalid array syntax.'), Environment::E_LEVEL_ERROR);
+                    throw new ConnectionException('Invalid array syntax', ConnectionException::EXCP_CODE_INVALID_ARGUMENT);
                 }
             }
         } else {
             // unsupported type: throw exception
-            $this->log(new ConnectionException('Expected string or array for $tables, something else given.'), Environment::E_LEVEL_ERROR);
+            throw new ConnectionException('Expected string or array for $tables, ' . gettype($tables) . ' given', ConnectionException::EXCP_CODE_INVALID_ARGUMENT);
         }
 
         // return string
@@ -432,6 +425,7 @@ abstract class PDOConnection implements IConnection
      * Parses a column selection and returns a valid SQL column selection
      * @param array $columns
      * @return string
+     * @throws ConnectionException
      */
     protected function parseColumns(array $columns): string
     {
@@ -459,10 +453,7 @@ abstract class PDOConnection implements IConnection
             }
         } else {
             // Empty column selection are not supported - there breaking the parsing
-            $this->log(new ConnectionException('Empty column selections are not supported!'), Environment::E_LEVEL_ERROR);
-
-            // return an empty string if exceptions are disabled
-            return '';
+            throw new ConnectionException('Empty column selections are currently not supported!', ConnectionException::EXCP_CODE_UNSUPPORTED_FEATURE);
         }
 
         // return string
@@ -532,7 +523,7 @@ abstract class PDOConnection implements IConnection
             $sql .= $this->parseAndConditions($conditions['and']);
         } else {
             // no conditions defined: throw warning
-            $this->log(new ConnectionException('No conditions found.'), Environment::E_LEVEL_WARNING);
+            throw new ConnectionException('Could not find any conditions', ConnectionException::EXCP_CODE_INVALID_ARGUMENT);
         }
 
         // return string
@@ -623,7 +614,7 @@ abstract class PDOConnection implements IConnection
                 }
             } else {
                 // throw exception
-                $this->log(new ConnectionException('Option "order" expected to be array, something else given.'), Environment::E_LEVEL_ERROR);
+                throw new ConnectionException('Option "order" expected to be an array, ' . gettype($options['order']) . ' given', ConnectionException::EXCP_CODE_INVALID_ARGUMENT);
             }
         }
 
@@ -679,8 +670,7 @@ abstract class PDOConnection implements IConnection
                 return false;
             }
         } catch (PDOException $e) {
-            $this->log(new ConnectionException('Failed to execute query!', $e), Environment::E_LEVEL_ERROR);
-            return false;
+            throw new ConnectionException('Failed to execute query', ConnectionException::EXCP_CODE_QUERY_EXECUTION_FAILED, $e);
         }
     }
 

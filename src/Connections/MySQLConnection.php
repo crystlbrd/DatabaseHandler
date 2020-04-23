@@ -5,15 +5,11 @@ namespace crystlbrd\DatabaseHandler\Connections;
 use crystlbrd\DatabaseHandler\Exceptions\ConnectionException;
 use crystlbrd\DatabaseHandler\Exceptions\ParserException;
 use crystlbrd\DatabaseHandler\Parser\PDOParser;
-use crystlbrd\Exceptionist\Environment;
-use crystlbrd\Exceptionist\ExceptionistTrait;
 use Exception;
 use PDO;
 
 class MySQLConnection extends PDOConnection
 {
-    use ExceptionistTrait;
-
     /**
      * Selects rows from a table
      * @param string|array $tables one or more table names
@@ -56,8 +52,8 @@ class MySQLConnection extends PDOConnection
             return PDOParser::parse($result);
         } else {
             // Throw an exception on error
-            $this->log(
-                new ConnectionException('Failed to select data from ' . json_encode($tables) . '!',
+            throw new ConnectionException('Failed to select data from ' . json_encode($tables) . '!',
+                    ConnectionException::EXCP_CODE_QUERY_EXECUTION_FAILED,
                     // log the PDO error as an own exception
                     new ConnectionException(
                         json_encode(
@@ -65,14 +61,10 @@ class MySQLConnection extends PDOConnection
                                 ['query' => $this->getLastQuery()],
                                 $this->getLastError()
                             )
-                        )
+                        ),
+                        ConnectionException::EXCP_CODE_PDO_ERROR
                     )
-                ),
-                Environment::E_LEVEL_ERROR
-            );
-
-            // return an empty array if exceptions are disabled
-            return [];
+                );
         }
     }
 

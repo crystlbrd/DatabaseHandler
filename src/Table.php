@@ -3,7 +3,6 @@
 namespace crystlbrd\DatabaseHandler;
 
 use crystlbrd\DatabaseHandler\Exceptions\ConnectionException;
-use crystlbrd\DatabaseHandler\Exceptions\TableException;
 use crystlbrd\DatabaseHandler\Interfaces\IConnection;
 
 class Table

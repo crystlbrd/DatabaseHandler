@@ -4,15 +4,11 @@ namespace crystlbrd\DatabaseHandler;
 
 use crystlbrd\DatabaseHandler\Exceptions\ConnectionException;
 use crystlbrd\DatabaseHandler\Exceptions\DatabaseHandlerException;
-use crystlbrd\DatabaseHandler\Exceptions\TableException;
 use crystlbrd\DatabaseHandler\Interfaces\IConnection;
 use crystlbrd\Exceptionist\Environment;
-use crystlbrd\Exceptionist\ExceptionistTrait;
 
 class DatabaseHandler
 {
-    use ExceptionistTrait;
-
     /**
      * @var array options
      */
@@ -67,9 +63,7 @@ class DatabaseHandler
             // set the pointer
             return $this->use($name);
         } else {
-            // log if not
-            $this->log(new DatabaseHandlerException('Connection with name ' . $name . ' already defined!'), Environment::E_LEVEL_WARNING);
-            return false;
+            throw new DatabaseHandlerException('Connection with name "' . $name . '" already defined!', DatabaseHandlerException::EXCP_CODE_CONNECTION_ALREADY_DEFINED);
         }
     }
 
@@ -92,9 +86,7 @@ class DatabaseHandler
             // return a happy true
             return true;
         } else {
-            // just log it this time
-            $this->log(new DatabaseHandlerException('No connection with name ' . $name . ' found!'), Environment::E_LEVEL_WARNING);
-            return false;
+            throw new DatabaseHandlerException('Connection "' . $name . '" not defined!', DatabaseHandlerException::EXCP_CODE_CONNECTION_NOT_DEFINED);
         }
     }
 
@@ -125,7 +117,7 @@ class DatabaseHandler
      * Selects a connection
      * @param string $name the connection name
      * @return bool
-     * @throws \Exception
+     * @throws DatabaseHandlerException
      */
     public function use(string $name): bool
     {
@@ -135,16 +127,10 @@ class DatabaseHandler
             $this->ConnectionPointer = $name;
 
             // open connection if needed
-            try {
-                return $this->Connections[$this->ConnectionPointer]->openConnection();
-            } catch (ConnectionException $e) {
-                // chain exceptions
-                $this->log(new DatabaseHandlerException('Failed to set pointer on ' . $name . '!', $e), Environment::E_LEVEL_ERROR);
-            }
+            return $this->Connections[$this->ConnectionPointer]->openConnection();
         } else {
             // throw exception if not
-            $this->log(new DatabaseHandlerException('No connection with name ' . $name . ' found!'), Environment::E_LEVEL_ERROR);
-            return false;
+            throw new DatabaseHandlerException('Connection "' . $name . '" not defined!', DatabaseHandlerException::EXCP_CODE_CONNECTION_NOT_DEFINED);
         }
     }
 
@@ -166,30 +152,22 @@ class DatabaseHandler
      * Deltes a  database from the currently selected connection
      * @param string $database
      * @return bool true on success, false on failure
-     * @throws DatabaseHandlerException
+     * @throws ConnectionException
      */
     public function deleteDatabase(string $database): bool
     {
-        try {
-            return $this->getActiveConnection()->dropDatabase($database);
-        } catch (ConnectionException $e) {
-            $this->log(new DatabaseHandlerException('Something went terribly wrong while deleting the database "' . $database . '"!', $e), Environment::E_LEVEL_ERROR);
-        }
+        return $this->getActiveConnection()->dropDatabase($database);
     }
 
     /**
      * Deletes a table from the currently selected connection
      * @param string $table
      * @return bool true on success, false on failure
-     * @throws DatabaseHandlerException
+     * @throws ConnectionException
      */
     public function deleteTable(string $table): bool
     {
-        try {
-            return $this->getActiveConnection()->dropTable($table);
-        } catch (ConnectionException $e) {
-            $this->log(new DatabaseHandlerException('Something went terribly wrong while deleting the table "' . $table . '"!', $e), Environment::E_LEVEL_ERROR);
-        }
+        return $this->getActiveConnection()->dropTable($table);
     }
 
     /**

@@ -7,14 +7,11 @@ namespace crystlbrd\DatabaseHandler\Parser;
 use crystlbrd\DatabaseHandler\Connections\PDOConnection;
 use crystlbrd\DatabaseHandler\Exceptions\ParserException;
 use crystlbrd\DatabaseHandler\Interfaces\IParser;
-use crystlbrd\Exceptionist\ExceptionistTrait;
 use PDO;
 use PDOStatement;
 
 class PDOParser implements IParser
 {
-    use ExceptionistTrait;
-
     /**
      * Translates the result of a data source into an array
      * @param PDOStatement $data
