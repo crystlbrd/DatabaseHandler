@@ -4,7 +4,6 @@ namespace crystlbrd\DatabaseHandler\Connections;
 
 use crystlbrd\DatabaseHandler\Exceptions\ConnectionException;
 use crystlbrd\DatabaseHandler\Interfaces\IConnection;
-use crystlbrd\Exceptionist\Environment;
 use PDO;
 use PDOException;
 use PDOStatement;

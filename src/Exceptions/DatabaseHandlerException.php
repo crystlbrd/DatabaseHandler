@@ -3,7 +3,6 @@
 namespace crystlbrd\DatabaseHandler\Exceptions;
 
 use \Exception;
-use Throwable;
 
 class DatabaseHandlerException extends Exception
 {
