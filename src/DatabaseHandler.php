@@ -36,16 +36,6 @@ class DatabaseHandler
     }
 
     /**
-     * Checks if there is a connection with a given name
-     * @param string $name the connection name
-     * @return bool
-     */
-    public function connectionExists(string $name): bool
-    {
-        return isset($this->Connections[$name]);
-    }
-
-    /**
      * Adds a connection to the handler
      * @param string $name the connection name
      * @param IConnection $connection
@@ -64,6 +54,84 @@ class DatabaseHandler
         } else {
             throw new DatabaseHandlerException('Connection with name "' . $name . '" already defined!', DatabaseHandlerException::EXCP_CODE_CONNECTION_ALREADY_DEFINED);
         }
+    }
+
+    /**
+     * Checks if there is a connection with a given name
+     * @param string $name the connection name
+     * @return bool
+     */
+    public function connectionExists(string $name): bool
+    {
+        return isset($this->Connections[$name]);
+    }
+
+    /**
+     * Deltes a  database from the currently selected connection
+     * @param string $database
+     * @return bool true on success, false on failure
+     * @throws ConnectionException
+     */
+    public function deleteDatabase(string $database): bool
+    {
+        return $this->getActiveConnection()->dropDatabase($database);
+    }
+
+    /**
+     * Deletes a table from the currently selected connection
+     * @param string $table
+     * @return bool true on success, false on failure
+     * @throws ConnectionException
+     */
+    public function deleteTable(string $table): bool
+    {
+        return $this->getActiveConnection()->dropTable($table);
+    }
+
+    /**
+     * Returns the currently selected connections
+     * @return IConnection
+     */
+    public function getActiveConnection(): IConnection
+    {
+        return $this->Connections[$this->ConnectionPointer];
+    }
+
+    /**
+     * Returns a connection by name
+     * @param string $name the internally defined name
+     * @return IConnection|null
+     */
+    public function getConnection(string $name): ?IConnection
+    {
+        if (isset($this->Connections[$name])) {
+            return $this->Connections[$name];
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Returns the last error of the currently active connection
+     * @return mixed
+     */
+    public function getLastError()
+    {
+        return $this->getActiveConnection()->getLastError();
+    }
+
+    /**
+     * Loads a table form the database
+     * @param string $table
+     * @return Table
+     */
+    public function load(string $table): Table
+    {
+        // init the table
+        return new Table(
+            $this->getActiveConnection(),
+            $table
+        );
     }
 
     /**
@@ -90,29 +158,6 @@ class DatabaseHandler
     }
 
     /**
-     * Returns a connection by name
-     * @param string $name the internally defined name
-     * @return IConnection|null
-     */
-    public function getConnection(string $name): ?IConnection
-    {
-        if (isset($this->Connections[$name])) {
-            return $this->Connections[$name];
-        } else {
-            return null;
-        }
-    }
-
-    /**
-     * Returns the currently selected connections
-     * @return IConnection
-     */
-    public function getActiveConnection(): IConnection
-    {
-        return $this->Connections[$this->ConnectionPointer];
-    }
-
-    /**
      * Selects a connection
      * @param string $name the connection name
      * @return bool
@@ -131,50 +176,5 @@ class DatabaseHandler
             // throw exception if not
             throw new DatabaseHandlerException('Connection "' . $name . '" not defined!', DatabaseHandlerException::EXCP_CODE_CONNECTION_NOT_DEFINED);
         }
-    }
-
-    /**
-     * Loads a table form the database
-     * @param string $table
-     * @return Table
-     */
-    public function load(string $table): Table
-    {
-        // init the table
-        return new Table(
-            $this->getActiveConnection(),
-            $table
-        );
-    }
-
-    /**
-     * Deltes a  database from the currently selected connection
-     * @param string $database
-     * @return bool true on success, false on failure
-     * @throws ConnectionException
-     */
-    public function deleteDatabase(string $database): bool
-    {
-        return $this->getActiveConnection()->dropDatabase($database);
-    }
-
-    /**
-     * Deletes a table from the currently selected connection
-     * @param string $table
-     * @return bool true on success, false on failure
-     * @throws ConnectionException
-     */
-    public function deleteTable(string $table): bool
-    {
-        return $this->getActiveConnection()->dropTable($table);
-    }
-
-    /**
-     * Returns the last error of the currently active connection
-     * @return mixed
-     */
-    public function getLastError()
-    {
-        return $this->getActiveConnection()->getLastError();
     }
 }
