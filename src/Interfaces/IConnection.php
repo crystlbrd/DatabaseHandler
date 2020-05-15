@@ -177,6 +177,13 @@ interface IConnection
 
 
     /**
+     * Tests, if a table exists
+     * @param string $name table name
+     * @return bool
+     */
+    public function tableExists(string $name): bool;
+
+    /**
      * Updates rows in a table
      * @param string $table table name
      * @param array $columns columns and values to update

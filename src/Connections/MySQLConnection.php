@@ -232,4 +232,17 @@ class MySQLConnection extends PDOConnection
         // execute
         return !!($this->execute($sql));
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function tableExists(string $name): bool
+    {
+        $sql = 'SHOW TABLES LIKE ' . $this->bindParam($name);
+        $res = $this->execute($sql);
+
+        if ($res) {
+            return !!$res->fetch(PDO::FETCH_ASSOC);
+        }
+    }
 }

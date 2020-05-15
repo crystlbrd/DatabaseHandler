@@ -158,6 +158,16 @@ class DatabaseHandler
     }
 
     /**
+     * Checks, if a table exists
+     * @param string $name table name
+     * @return bool
+     */
+    public function tableExists(string $name): bool
+    {
+        return $this->getActiveConnection()->tableExists($name);
+    }
+
+    /**
      * Selects a connection
      * @param string $name the connection name
      * @return bool
