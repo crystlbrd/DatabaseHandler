@@ -242,7 +242,10 @@ class MySQLConnection extends PDOConnection
         $res = $this->execute($sql);
 
         if ($res) {
-            return !!$res->fetch(PDO::FETCH_ASSOC);
+            return (
+                ($r = $res->fetchAll(PDO::FETCH_ASSOC)) &&
+                count($r) == 1
+            );
         }
     }
 }
