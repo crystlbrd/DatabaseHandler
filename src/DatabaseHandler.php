@@ -30,9 +30,7 @@ class DatabaseHandler
     public function __construct(array $options = [])
     {
         // load options
-        $this->Options = array_merge($options, [
-            'reporting' => Environment::E_LEVEL_ERROR
-        ]);
+        $this->Options = array_merge($options, []);
     }
 
     /**
