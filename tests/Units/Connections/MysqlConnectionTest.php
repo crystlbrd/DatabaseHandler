@@ -3,6 +3,7 @@
 
 namespace crystlbrd\DatabaseHandler\Tests\Units\Connections;
 
+use crystlbrd\DatabaseHandler\Connections\MySQLConnection;
 use crystlbrd\DatabaseHandler\Connections\PDOConnection;
 use crystlbrd\DatabaseHandler\Tests\Helper\Iterator\InsertSQLIterator;
 use crystlbrd\DatabaseHandler\Tests\Helper\Iterator\SelectSQLIterator;
@@ -44,5 +45,15 @@ class MysqlConnectionTest extends TestCase
     function config(): void
     {
         $this->setConnectionClass(TestingMySQLConnection::class);
+    }
+
+    function testTableExists()
+    {
+        $conn = new MySQLConnection($_ENV['db_host'], $_ENV['db_user'], $_ENV['db_pass'], $_ENV['db_name']);
+        $conn->openConnection();
+
+        self::assertTrue($conn->tableExists('table_a'));
+        self::assertTrue($conn->tableExists('table_b'));
+        self::assertFalse($conn->tableExists('table_c'));
     }
 }
