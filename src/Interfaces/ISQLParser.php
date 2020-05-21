@@ -5,6 +5,19 @@ namespace crystlbrd\DatabaseHandler\Interfaces;
 interface ISQLParser
 {
     /**
+     * Returns all bound values
+     * @return array Bound values (placeholder => value)
+     */
+    public function getBoundValues(): array;
+
+    /**
+     * Gets the value of a specific placeholder
+     * @param string $placeholder Placeholder
+     * @return null|string Value
+     */
+    public function getValueOf(string $placeholder): ?string;
+
+    /**
      * Generates an INSERT query
      * @param string $table Table where to insert to
      * @param array $data Data (column => value)

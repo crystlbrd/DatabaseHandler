@@ -6,12 +6,15 @@ namespace crystlbrd\DatabaseHandler\SQLParser;
 
 use crystlbrd\DatabaseHandler\Exceptions\ConnectionException;
 use crystlbrd\DatabaseHandler\Exceptions\ParserException;
-use crystlbrd\DatabaseHandler\Interfaces\IConnection;
 use crystlbrd\DatabaseHandler\Interfaces\ISQLParser;
-use http\Header\Parser;
 
 class MySQLParser implements ISQLParser
 {
+    /**
+     * @var array Bound values (placeholder => value)
+     */
+    protected $BoundValues = [];
+
     /**
      * Used to separate the table name from the column name in the alias
      */
@@ -22,6 +25,11 @@ class MySQLParser implements ISQLParser
      */
     public const ALIAS_SEPARATOR = '__as__';
 
+
+    public function bindValue(string $value, string $placeholder)
+    {
+        $this->BoundValues[$placeholder] = $value;
+    }
 
     /**
      * Checks for type of the value and adds quotes, if required
@@ -37,6 +45,23 @@ class MySQLParser implements ISQLParser
         } else {
             return '"' . $value . '"';
         }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getBoundValues(): array
+    {
+        return $this->BoundValues;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getValueOf(string $placeholder): ?string
+    {
+        if (isset($this->BoundValues[$placeholder])) return $this->BoundValues[$placeholder];
+        return null;
     }
 
     /**
@@ -210,7 +235,7 @@ class MySQLParser implements ISQLParser
      * @return string WHERE condition query
      * @throws ParserException
      */
-    public function generateWhereConditions(array $where, bool $detectValueType = true): string
+    public function generateWhereConditions(array $where, bool $detectValueType = true, bool $usePlaceholders = false, string $placeholderTemplate = ':param'): string
     {
         // define string
         $sql = '';
@@ -345,7 +370,7 @@ class MySQLParser implements ISQLParser
      * @inheritDoc
      * @throws ParserException
      */
-    public function select(array $tables, array $columns = [], array $where = [], array $options = []): string
+    public function select(array $tables, array $columns = [], array $where = [], array $options = [], bool $usePlaceholders = false, string $placeholderTemplate = ':param'): string
     {
         // SELECT
         $sql = 'SELECT';
@@ -358,7 +383,7 @@ class MySQLParser implements ISQLParser
 
         // WHERE
         if (!empty($conditions)) {
-            $sql .= ' WHERE ' . $this->generateWhereConditions($conditions) . ' ';
+            $sql .= ' WHERE ' . $this->generateWhereConditions($conditions, !$usePlaceholders, $usePlaceholders, $placeholderTemplate) . ' ';
         }
 
         // ADDITIONAL OPTIONS
