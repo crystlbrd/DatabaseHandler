@@ -4,6 +4,7 @@ namespace crystlbrd\DatabaseHandler\Connections;
 
 use crystlbrd\DatabaseHandler\Exceptions\ConnectionException;
 use crystlbrd\DatabaseHandler\Interfaces\IConnection;
+use crystlbrd\DatabaseHandler\Interfaces\ISQLParser;
 use PDO;
 use PDOException;
 use PDOStatement;
@@ -29,6 +30,16 @@ abstract class PDOConnection implements IConnection
      * @var string database name
      */
     protected $Name;
+
+    /**
+     * @var string $Driver Database Driver
+     */
+    protected $Driver;
+
+    /**
+     * @var ISQLParser $SQLParser SQL-Parser for generating SQL queries
+     */
+    protected $SQLParser;
 
     /**
      * @var array options
@@ -78,6 +89,7 @@ abstract class PDOConnection implements IConnection
      * @param string $pass password
      * @param string $name database name
      * @param array $options additional options
+     * @throws ConnectionException
      */
     public function __construct(string $host, string $user, string $pass, string $name, array $options = [])
     {
@@ -92,6 +104,20 @@ abstract class PDOConnection implements IConnection
             'encoding' => 'utf8mb4',
             'port' => 3306
         ], $options);
+
+        // Driver (required)
+        if (!isset($this->Options['driver']) || !is_string($this->Options['driver'])) {
+            throw new ConnectionException('No driver defined!', ConnectionException::EXCP_CODE_DRIVER_UNDEFINED);
+        } else {
+            $this->Driver = $this->Options['driver'];
+        }
+
+        // SQLParser (required)
+        if (!isset($this->Options['parser']) || !($this->Options['driver'] instanceof ISQLParser)) {
+            throw new ConnectionException('Missing valid SQL parser!', ConnectionException::EXCP_CODE_INVALID_PARSER);
+        } else {
+            $this->SQLParser = $this->Options['parser'];
+        }
     }
 
     /**
@@ -106,8 +132,11 @@ abstract class PDOConnection implements IConnection
             try {
                 /// build dst
 
+                // driver
+                $dst = $this->Driver . ':';
+
                 // host
-                $dst = 'mysql:host=' . $this->Host . ';';
+                $dst .= 'host=' . $this->Host . ';';
 
                 // db name
                 $dst .= 'dbname=' . $this->Name . ';';
