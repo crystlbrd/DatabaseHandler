@@ -162,7 +162,7 @@ class MySQL
                     'col3' => null
                 ],
                 'col1 = "a" AND col2 = 2 AND col3 IS NULL',
-                'col1 = :param0 AND col2 = :param1 AND col3 IS NULL'
+                'col1 = :param0 AND col2 = 2 AND col3 IS NULL'
             ],
             'simple AND-combined conditions (level 2 syntax)' => [
                 [
@@ -173,7 +173,7 @@ class MySQL
                     ]
                 ],
                 'col1 = "a" AND col2 = 2 AND col3 IS NULL',
-                'col1 = :param0 AND col2 = :param1 AND col3 IS NULL'
+                'col1 = :param0 AND col2 = 2 AND col3 IS NULL'
             ],
             'multiple AND-combined conditions on one column' => [
                 [
@@ -183,7 +183,7 @@ class MySQL
                     ]
                 ],
                 'col1 = "a" AND col1 = 1 AND col2 IS NULL',
-                'col1 = :param0 AND col1 = :param1 AND col2 IS NULL',
+                'col1 = :param0 AND col1 = 1 AND col2 IS NULL',
             ],
             'simple OR-combined conditions' => [
                 [
@@ -194,7 +194,7 @@ class MySQL
                     ]
                 ],
                 'col1 = "a" OR col2 = 2 OR col3 IS NULL',
-                'col1 = :param0 OR col2 = :param1 OR col3 IS NULL'
+                'col1 = :param0 OR col2 = 2 OR col3 IS NULL'
             ],
             'complex OR-combined conditions' => [
                 [
@@ -209,9 +209,9 @@ class MySQL
                 'OR col2 = "b" AND col3 = 3.1 ' .
                 'OR col4 = "c" AND col5 = -7 AND col5 IS NULL',
                 // placeholders
-                'col1 = :param0 OR col1 = :param1 ' .
-                'OR col2 = :param2 AND col3 = :param3 ' .
-                'OR col4 = :param4 AND col5 = :param5 AND col5 IS NULL'
+                'col1 = :param0 OR col1 = 1 ' .
+                'OR col2 = :param1 AND col3 = 3.1 ' .
+                'OR col4 = :param2 AND col5 = -7 AND col5 IS NULL'
             ],
             'simple combined conditions' => [
                 [
@@ -228,8 +228,8 @@ class MySQL
                 'col1 = "a" AND col3 = 3.3 AND col4 IS NULL ' .
                 'OR col2 = 2 AND col3 = 3.3 AND col4 IS NULL',
                 // placeholders
-                'col1 = :param0 AND col3 = :param1 AND col4 IS NULL ' .
-                'OR col2 = :param2 AND col3 = :param1 AND col4 IS NULL',
+                'col1 = :param0 AND col3 = 3.3 AND col4 IS NULL ' .
+                'OR col2 = 2 AND col3 = 3.3 AND col4 IS NULL',
             ],
             'complex combined conditions' => [
                 [
@@ -251,11 +251,127 @@ class MySQL
                 'OR col5 = "d" AND col6 = "e" AND col1 = "a" AND col2 = "b" AND col2 = 2 ' .
                 'OR col6 IS NULL AND col7 = 7 AND col7 IS NULL AND col1 = "a" AND col2 = "b" AND col2 = 2',
                 // placeholders
-                'col3 = :param0 AND col1 = :param1 AND col2 = :param2 AND col2 = :param3 ' .
-                'OR col4 = :param4 AND col1 = :param1 AND col2 = :param2 AND col2 = :param3 ' .
-                'OR col4 = :param5 AND col1 = :param1 AND col2 = :param2 AND col2 = :param3 ' .
-                'OR col5 = :param6 AND col6 = :param7 AND col1 = :param1 AND col2 = :param2 AND col2 = :param3 ' .
-                'OR col6 IS NULL AND col7 = :param8 AND col7 IS NULL AND col1 = :param1 AND col2 = :param2 AND col2 = :param3',
+                'col3 = :param0 AND col1 = :param1 AND col2 = :param2 AND col2 = 2 ' .
+                'OR col4 = 4.1 AND col1 = :param1 AND col2 = :param2 AND col2 = 2 ' .
+                'OR col4 = 4.2 AND col1 = :param1 AND col2 = :param2 AND col2 = 2 ' .
+                'OR col5 = :param3 AND col6 = :param4 AND col1 = :param1 AND col2 = :param2 AND col2 = 2 ' .
+                'OR col6 IS NULL AND col7 = 7 AND col7 IS NULL AND col1 = :param1 AND col2 = :param2 AND col2 = 2',
+            ]
+        ];
+    }
+
+    public function validValuesWithExpectedOutputs(): array
+    {
+        return [
+            'string (no syntax)' => [
+                'hello world',
+                ' = "hello world"',
+                ' = :param0'
+            ],
+            'int (no syntax)' => [
+                12345,
+                ' = 12345',
+                ' = 12345'
+            ],
+            'float (no syntax)' => [
+                12.345,
+                ' = 12.345',
+                ' = 12.345'
+            ],
+            'null (no syntax)' => [
+                null,
+                ' IS NULL',
+                ' IS NULL'
+            ],
+            'equals (simple syntax)' => [
+                '= hello world!',
+                ' = "hello world!"',
+                ' = :param0'
+            ],
+            'greater than (simple syntax)' => [
+                '> 2',
+                ' > 2',
+                ' > 2'
+            ],
+            'equal or greater than (simple syntax)' => [
+                '>= 2',
+                ' >= 2',
+                ' >= 2'
+            ],
+            'lesser than (simple syntax)' => [
+                '< 5.23',
+                ' < 5.23',
+                ' < 5.23'
+            ],
+            'equal or lesser than (simple syntax)' => [
+                '<= 5.23',
+                ' <= 5.23',
+                ' <= 5.23'
+            ],
+            'not equal (simple syntax)' => [
+                '!= hello world',
+                ' != "hello world"',
+                ' != :param0'
+            ],
+            'not null (simple syntax)' => [
+                '! null',
+                ' IS NOT NULL',
+                ' IS NOT NULL'
+            ],
+            'like (simple syntax)' => [
+                '~ %hello world%',
+                ' LIKE "%hello world%"',
+                ' LIKE :param0'
+            ],
+            'not like (simple syntax)' => [
+                '!~ area51',
+                ' NOT LIKE "area51"',
+                ' NOT LIKE :param0'
+            ],
+            'equals (full syntax)' => [
+                '={{> hello world! <}}',
+                ' = "> hello world! <"',
+                ' = :param0'
+            ],
+            'greater than (full syntax)' => [
+                '>{{2}}',
+                ' > 2',
+                ' > 2'
+            ],
+            'equal or greater than (full syntax)' => [
+                '>={{2}}',
+                ' >= 2',
+                ' >= 2'
+            ],
+            'lesser than (full syntax)' => [
+                '<{{5.23}}',
+                ' < 5.23',
+                ' < 5.23'
+            ],
+            'equal or lesser than (full syntax)' => [
+                '<={{5.23}}',
+                ' <= 5.23',
+                ' <= 5.23'
+            ],
+            'not equal (full syntax)' => [
+                '!={{hello world}}',
+                ' != "hello world"',
+                ' != :param0'
+            ],
+            'not null (full syntax)' => [
+                '!{{null}}',
+                ' IS NOT NULL',
+                ' IS NOT NULL'
+            ],
+            'like (full syntax)' => [
+                '~{{%hello world%}}',
+                ' LIKE "%hello world%"',
+                ' LIKE :param0'
+            ],
+            'not like (full syntax)' => [
+                '!~{{area51}}',
+                ' NOT LIKE "area51"',
+                ' NOT LIKE :param0'
             ]
         ];
     }

@@ -6,6 +6,7 @@ namespace crystlbrd\DatabaseHandler\SQLParser;
 use crystlbrd\DatabaseHandler\Exceptions\ParserException;
 use crystlbrd\DatabaseHandler\Interfaces\IConnection;
 use crystlbrd\DatabaseHandler\Interfaces\ISQLParser;
+use crystlbrd\Values\NumVal;
 
 class MySQLParser implements ISQLParser
 {
@@ -398,7 +399,7 @@ class MySQLParser implements ISQLParser
             '!' => ' IS NOT '
         ];
 
-        return (isset($dict_operators[$operator]) ? $dict_operators[$operator] : ' = ');
+        return (isset($dict_operators[$operator]) ? $dict_operators[$operator] : '');
     }
 
     /**
@@ -409,43 +410,53 @@ class MySQLParser implements ISQLParser
      */
     public function parseValue($value, bool $usePlaceholder = false): string
     {
-        $val = $value;
-
         // Try to detect complex syntax
         $e = explode('{{', $value);
-        if (count($e) == 2) {
+        if (count($e) > 1) {
             $op = $this->parseOperator(trim($e[0]));
             if ($op) {
-                $val = str_replace(['{{', '}}'], '', $e[1]);
+                unset($e[0]);
+                $value = str_replace(['{{', '}}'], '', implode('{{', $e));
             }
         }
 
         // Try to detect simple syntax
-        $e = explode(' ', $value);
-        if (count($e) > 1) {
-            $op = $this->parseOperator($e[0]);
-            if ($op) {
-                unset($e[0]);
-                $val = implode(' ', $e);
+        if (!isset($op)) {
+            $e = explode(' ', $value);
+            if (count($e) > 1) {
+                $op = $this->parseOperator($e[0]);
+                if ($op) {
+                    unset($e[0]);
+                    $value = implode(' ', $e);
+                }
             }
         }
 
         // No special syntax detected. Just return the plain value
-        if (!isset($op)) {
+        if (empty($op)) {
             $op = ' = ';
         }
 
+        // transform numeric strings in actual numbers
+        if (is_numeric($value)) {
+            $value += 0;
+        }
 
-        if ($val === null) {
+        // transform "null" values to actual null values
+        if (strtolower($value) === 'null') {
+            $value = null;
+        }
+
+        if ($value === null) {
             // special treatment for NULL values
-            return ' IS NULL';
+            return ($op == ' = ' ? ' IS ' : $op) . 'NULL';
         } else {
-            if ($usePlaceholder) {
+            if ($usePlaceholder && is_string($value)) {
                 // get a placeholder and safe the value for later
-                return $op . $this->bindValue($val);
+                return $op . $this->bindValue($value);
             } else {
                 // try to auto-detect value type when not using placeholders
-                return $op . $this->detectType($val);
+                return $op . $this->detectType($value);
             }
         }
     }

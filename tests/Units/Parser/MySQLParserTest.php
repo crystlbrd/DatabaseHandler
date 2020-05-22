@@ -121,4 +121,16 @@ class MySQLParserTest extends TestCase
         self::assertSame($expectedOutputWithValueDetection, $this->Parser->generateWhereConditions($conditions, false));
         self::assertSame($expectedOutputWithPlaceholders, $this->Parser->generateWhereConditions($conditions, true));
     }
+
+    /**
+     * @dataProvider \crystlbrd\DatabaseHandler\Tests\Datasets\Parser\MySQL::validValuesWithExpectedOutputs
+     * @param $value
+     * @param $expectedOutputWithValueDetection
+     * @param $expectedOutputWithPlaceholders
+     */
+    public function testValueParsing($value, $expectedOutputWithValueDetection, $expectedOutputWithPlaceholders)
+    {
+        self::assertSame($expectedOutputWithValueDetection, $this->Parser->parseValue($value, false));
+        self::assertSame($expectedOutputWithPlaceholders, $this->Parser->parseValue($value, true));
+    }
 }
