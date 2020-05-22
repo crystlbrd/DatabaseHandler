@@ -43,7 +43,7 @@ class MySQLParserTest extends TestCase
 
         foreach ($dataset as $value) {
             // get a placeholder
-            $placeholder = $this->Parser->getPlaceholder(':param');
+            $placeholder = $this->Parser->getPlaceholder();
 
             // bind the value
             $this->Parser->bindValue($value, $placeholder);
@@ -72,6 +72,6 @@ class MySQLParserTest extends TestCase
         self::assertCount(0, $this->Parser->getValues());
 
         // the placeholder generation should start again at 0
-        self::assertSame(':param0', $this->Parser->getPlaceholder(':param'));
+        self::assertSame(':param0', $this->Parser->getPlaceholder());
     }
 }

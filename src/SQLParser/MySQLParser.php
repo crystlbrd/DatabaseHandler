@@ -417,10 +417,10 @@ class MySQLParser implements ISQLParser
         if ($usePlaceholders) $this->resetPlaceholders();
 
         // SELECT
-        $sql = 'SELECT';
+        $sql = 'SELECT ';
 
         // COLUMNS
-        $sql .= ' ' . $this->generateColumnSelection($columns);
+        $sql .= $this->generateColumnSelection($columns);
 
         // FROM
         $sql .= ' FROM ' . $this->generateTableSelection($tables);
@@ -435,7 +435,7 @@ class MySQLParser implements ISQLParser
             $sql .= $this->generateOptions($options);
         }
 
-        // adding end ;
+        // adding semicolon to end
         $sql .= ';';
 
         return $sql;
