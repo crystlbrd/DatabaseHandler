@@ -3,8 +3,6 @@
 
 namespace crystlbrd\DatabaseHandler\SQLParser;
 
-
-use crystlbrd\DatabaseHandler\Exceptions\ConnectionException;
 use crystlbrd\DatabaseHandler\Exceptions\ParserException;
 use crystlbrd\DatabaseHandler\Interfaces\IConnection;
 use crystlbrd\DatabaseHandler\Interfaces\ISQLParser;
@@ -25,16 +23,6 @@ class MySQLParser implements ISQLParser
      * @var string $PlaceholderTemplate Template for naming placeholders
      */
     private $PlaceholderTemplate = ':param';
-
-    /**
-     * Used to separate the table name from the column name in the alias
-     */
-    public const COLUMN_SEPARATOR = '__msqp__';
-
-    /**
-     * Used to separate the column name and the user defined alias
-     */
-    public const ALIAS_SEPARATOR = '__as__';
 
 
     public function bindValue($value, string $placeholder): void
@@ -385,21 +373,6 @@ class MySQLParser implements ISQLParser
     public function insert(string $table, array $data, bool $usePlaceholders = false): string
     {
         // TODO: Implement insert() method.
-    }
-
-    /**
-     * Parses the column selector and returns table and column name separately
-     * @param string $selector
-     * @return false|string[] [table, column]
-     */
-    public function parseColumn(string $selector)
-    {
-        $e = explode('.', $selector);
-        if (count($e) == 1) {
-            return ['', $e[0]];
-        } else {
-            return $e;
-        }
     }
 
     /**
