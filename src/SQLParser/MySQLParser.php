@@ -167,7 +167,7 @@ class MySQLParser implements ISQLParser
      * Generates the column selection query (SELECT ...)
      * @param array $columns Columns to select
      * @return string Column selection query
-     * @throws ParserException Only if you try to select all columns
+     * @throws ParserException
      */
     public function generateColumnSelection(array $columns): string
     {
@@ -175,27 +175,22 @@ class MySQLParser implements ISQLParser
         $sql = '';
 
         if (!empty($columns)) {
-            $i = 0;
-            foreach ($columns as $column => $label) {
-                // add trailing comma
-                $sql .= ($i != 0 ? ', ' : '');
+           $i = 0;
+            foreach ($columns as $col => $alias) {
+                $c = ($i ? ', ' : '');
 
-                // check for AS syntax
-                if (is_int($column)) {
-                    list($table, $column) = $this->parseColumn($label);
-                    $label = $column;
+                if (is_int($col)) {
+                    $sql .= $c . $alias;
+                } else if (is_string($col) && is_string($alias)) {
+                    $sql .= $c . $col . ' AS ' . $alias;
                 } else {
-                    list($table, $column) = $this->parseColumn($column);
+                    throw new ParserException('Invalid column selector!', ParserException::EXCP_CODE_INVALID_ARGUMENT);
                 }
 
-                // Build SQL
-                $sql .= $table . '.' . $column . ' AS ' . $table . self::COLUMN_SEPARATOR . $column . self::ALIAS_SEPARATOR . $label;
-
                 $i++;
-            }
+           }
         } else {
-            // Empty column selection are not supported - there breaking the parsing
-            throw new ParserException('Empty column selections are currently not supported!', ConnectionException::EXCP_CODE_UNSUPPORTED_FEATURE);
+            $sql = '*';
         }
 
         // return string
@@ -399,7 +394,12 @@ class MySQLParser implements ISQLParser
      */
     public function parseColumn(string $selector)
     {
-        return explode('.', $selector);
+        $e = explode('.', $selector);
+        if (count($e) == 1) {
+            return ['', $e[0]];
+        } else {
+            return $e;
+        }
     }
 
     /**

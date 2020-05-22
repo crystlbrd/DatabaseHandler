@@ -6,7 +6,7 @@ namespace crystlbrd\DatabaseHandler\Tests\Datasets\Parser;
 
 use crystlbrd\DatabaseHandler\Interfaces\IConnection;
 
-trait MySQL
+class MySQL
 {
     public function invalidTableSelectors(): array
     {
@@ -121,6 +121,28 @@ trait MySQL
                     ]
                 ],
                 'table1, table2 INNER JOIN table3 ON table3.ref_table2 = table2.table2_col'
+            ]
+        ];
+    }
+
+    public function validColumnSelectorsAndThereExpectedOutputs(): array
+    {
+        return [
+            'empty selector' => [
+                [],
+                '*'
+            ],
+            'simple column selection' => [
+                ['col1', 'col2', 'col3'],
+                'col1, col2, col3'
+            ],
+            'AS syntax' => [
+                ['col1' => 'a', 'col2' => 'b', 'col3' => 'c'],
+                'col1 AS a, col2 AS b, col3 AS c'
+            ],
+            'with table name' => [
+                ['table1.col1', 'table1.col2' => 'c', 'table2.col1'],
+                'table1.col1, table1.col2 AS c, table2.col1'
             ]
         ];
     }

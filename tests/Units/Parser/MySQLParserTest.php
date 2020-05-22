@@ -6,7 +6,6 @@ namespace crystlbrd\DatabaseHandler\Tests\Units\Parser;
 
 use crystlbrd\DatabaseHandler\Exceptions\ParserException;
 use crystlbrd\DatabaseHandler\SQLParser\MySQLParser;
-use crystlbrd\DatabaseHandler\Tests\Datasets\Parser\MySQL;
 use crystlbrd\Values\Exceptions\InvalidArgumentException;
 use crystlbrd\Values\Exceptions\UnsupportedFeatureException;
 use crystlbrd\Values\NumVal;
@@ -15,9 +14,6 @@ use PHPUnit\Framework\TestCase;
 
 class MySQLParserTest extends TestCase
 {
-    use MySQL;
-
-
     protected $Parser;
 
     protected function setUp(): void
@@ -82,7 +78,7 @@ class MySQLParserTest extends TestCase
 
     /**
      * Tests the table selection generation with valid input
-     * @dataProvider validTableSelectorsAndThereExpectedOutputs
+     * @dataProvider \crystlbrd\DatabaseHandler\Tests\Datasets\Parser\MySQL::validTableSelectorsAndThereExpectedOutputs
      * @param $selector
      * @param string $expectedOutput
      * @throws ParserException
@@ -94,7 +90,7 @@ class MySQLParserTest extends TestCase
 
     /**
      * Tests the table selection generation with invalid input
-     * @dataProvider invalidTableSelectors
+     * @dataProvider \crystlbrd\DatabaseHandler\Tests\Datasets\Parser\MySQL::invalidTableSelectors
      * @param $selector
      */
     public function testTableSelectionGenerationWithInvalidInput($selector)
@@ -102,5 +98,17 @@ class MySQLParserTest extends TestCase
         // every selector should be invalid and throw an exception
         $this->expectException(ParserException::class);
         $this->Parser->generateTableSelection($selector);
+    }
+
+    /**
+     * Tests column selection generation with valid input
+     * @dataProvider \crystlbrd\DatabaseHandler\Tests\Datasets\Parser\MySQL::validColumnSelectorsAndThereExpectedOutputs
+     * @param array $columnsSelector
+     * @param string $expectedOutput
+     * @throws ParserException
+     */
+    public function testColumnSelectionGeneration(array $columnsSelector, string $expectedOutput)
+    {
+        self::assertSame($expectedOutput, $this->Parser->generateColumnSelection($columnsSelector));
     }
 }
