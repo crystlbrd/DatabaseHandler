@@ -146,4 +146,117 @@ class MySQL
             ]
         ];
     }
+
+    public function validWhereConditionsAndThereExpectedOutputs(): array
+    {
+        return [
+            'empty condition array' => [
+                [],
+                '',
+                ''
+            ],
+            'simple AND-combined conditions (level 1 syntax)' => [
+                [
+                    'col1' => 'a',
+                    'col2' => 2,
+                    'col3' => null
+                ],
+                'col1 = "a" AND col2 = 2 AND col3 IS NULL',
+                'col1 = :param0 AND col2 = :param1 AND col3 IS NULL'
+            ],
+            'simple AND-combined conditions (level 2 syntax)' => [
+                [
+                    'and' => [
+                        'col1' => 'a',
+                        'col2' => 2,
+                        'col3' => null
+                    ]
+                ],
+                'col1 = "a" AND col2 = 2 AND col3 IS NULL',
+                'col1 = :param0 AND col2 = :param1 AND col3 IS NULL'
+            ],
+            'multiple AND-combined conditions on one column' => [
+                [
+                    'and' => [
+                        'col1' => ['a', 1],
+                        'col2' => null
+                    ]
+                ],
+                'col1 = "a" AND col1 = 1 AND col2 IS NULL',
+                'col1 = :param0 AND col1 = :param1 AND col2 IS NULL',
+            ],
+            'simple OR-combined conditions' => [
+                [
+                    'or' => [
+                        'col1' => 'a',
+                        'col2' => 2,
+                        'col3' => null
+                    ]
+                ],
+                'col1 = "a" OR col2 = 2 OR col3 IS NULL',
+                'col1 = :param0 OR col2 = :param1 OR col3 IS NULL'
+            ],
+            'complex OR-combined conditions' => [
+                [
+                    'or' => [
+                        'col1' => ['a', 1],
+                        ['col2' => 'b', 'col3' => 3.1],
+                        ['col4' => 'c', 'col5' => [-7, null]]
+                    ]
+                ],
+                // value detection
+                'col1 = "a" OR col1 = 1 ' .
+                'OR col2 = "b" AND col3 = 3.1 ' .
+                'OR col4 = "c" AND col5 = -7 AND col5 IS NULL',
+                // placeholders
+                'col1 = :param0 OR col1 = :param1 ' .
+                'OR col2 = :param2 AND col3 = :param3 ' .
+                'OR col4 = :param4 AND col5 = :param5 AND col5 IS NULL'
+            ],
+            'simple combined conditions' => [
+                [
+                    'or' => [
+                        'col1' => 'a',
+                        'col2' => 2
+                    ],
+                    'and' => [
+                        'col3' => 3.3,
+                        'col4' => null
+                    ]
+                ],
+                // value detection
+                'col1 = "a" AND col3 = 3.3 AND col4 IS NULL ' .
+                'OR col2 = 2 AND col3 = 3.3 AND col4 IS NULL',
+                // placeholders
+                'col1 = :param0 AND col3 = :param1 AND col4 IS NULL ' .
+                'OR col2 = :param2 AND col3 = :param1 AND col4 IS NULL',
+            ],
+            'complex combined conditions' => [
+                [
+                    'and' => [
+                        'col1' => 'a',
+                        'col2' => ['b', 2],
+                    ],
+                    'or' => [
+                        'col3' => 'c',
+                        'col4' => [4.1, 4.2],
+                        ['col5' => 'd', 'col6' => 'e'],
+                        ['col6' => null, 'col7' => [7, null]]
+                    ]
+                ],
+                // value detection
+                'col3 = "c" AND col1 = "a" AND col2 = "b" AND col2 = 2 ' .
+                'OR col4 = 4.1 AND col1 = "a" AND col2 = "b" AND col2 = 2 ' .
+                'OR col4 = 4.2 AND col1 = "a" AND col2 = "b" AND col2 = 2 ' .
+                'OR col5 = "d" AND col6 = "e" AND col1 = "a" AND col2 = "b" AND col2 = 2 ' .
+                'OR col6 IS NULL AND col7 = 7 AND col7 IS NULL AND col1 = "a" AND col2 = "b" AND col2 = 2',
+                // placeholders
+                'col3 = :param0 AND col1 = :param1 AND col2 = :param2 AND col2 = :param3 ' .
+                'OR col4 = :param4 AND col1 = :param1 AND col2 = :param2 AND col2 = :param3 ' .
+                'OR col4 = :param5 AND col1 = :param1 AND col2 = :param2 AND col2 = :param3 ' .
+                'OR col5 = :param6 AND col6 = :param7 AND col1 = :param1 AND col2 = :param2 AND col2 = :param3 ' .
+                'OR col6 IS NULL AND col7 = :param8 AND col7 IS NULL AND col1 = :param1 AND col2 = :param2 AND col2 = :param3',
+            ]
+        ];
+    }
 }

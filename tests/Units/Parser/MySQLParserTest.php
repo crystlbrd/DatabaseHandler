@@ -43,11 +43,8 @@ class MySQLParserTest extends TestCase
         $boundValues = [];
 
         foreach ($dataset as $value) {
-            // get a placeholder
-            $placeholder = $this->Parser->getPlaceholder();
-
             // bind the value
-            $this->Parser->bindValue($value, $placeholder);
+            $placeholder = $this->Parser->bindValue($value);
 
             // create a copy to test against
             $boundValues[$placeholder] = $value;
@@ -110,5 +107,18 @@ class MySQLParserTest extends TestCase
     public function testColumnSelectionGeneration(array $columnsSelector, string $expectedOutput)
     {
         self::assertSame($expectedOutput, $this->Parser->generateColumnSelection($columnsSelector));
+    }
+
+    /**
+     * Tests WHERE conditions building
+     * @dataProvider \crystlbrd\DatabaseHandler\Tests\Datasets\Parser\MySQL::validWhereConditionsAndThereExpectedOutputs
+     * @param array $conditions
+     * @param string $expectedOutputWithValueDetection
+     * @param $expectedOutputWithPlaceholders
+     */
+    public function testWhereConditionGeneration(array $conditions, string $expectedOutputWithValueDetection, string $expectedOutputWithPlaceholders)
+    {
+        self::assertSame($expectedOutputWithValueDetection, $this->Parser->generateWhereConditions($conditions, false));
+        self::assertSame($expectedOutputWithPlaceholders, $this->Parser->generateWhereConditions($conditions, true));
     }
 }
