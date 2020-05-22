@@ -667,7 +667,7 @@ abstract class PDOConnection implements IConnection
             $stm = $this->PDO->prepare($sql);
 
             // Bind all parameters
-            foreach ($this->SQLParser->getBoundValues() as $index => $value) {
+            foreach ($this->SQLParser->getValues() as $index => $value) {
                 if ($value == 'NULL') {
                     // special rule for NULL values
                     $stm->bindValue($index, null, PDO::PARAM_INT);

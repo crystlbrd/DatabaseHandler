@@ -55,7 +55,7 @@ class MySQLParser implements ISQLParser
     /**
      * @inheritDoc
      */
-    public function getBoundValues(): array
+    public function getValues(): array
     {
         return $this->BoundValues;
     }
