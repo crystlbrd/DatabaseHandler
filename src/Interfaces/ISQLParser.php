@@ -39,6 +39,11 @@ interface ISQLParser
     public function insert(string $table, array $data, bool $usePlaceholders = false): string;
 
     /**
+     * Deletes replaced values and resets placeholder generation
+     */
+    public function resetPlaceholders(): void;
+
+    /**
      * Generates a SELECT query
      * @param array $tables Tables to select from
      * @param array $columns Columns to select

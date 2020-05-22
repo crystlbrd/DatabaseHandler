@@ -395,6 +395,9 @@ class MySQLParser implements ISQLParser
         return $op . $val;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function resetPlaceholders(): void
     {
         // reset the index
