@@ -71,6 +71,14 @@ class MySQLParser implements ISQLParser
     /**
      * @inheritDoc
      */
+    public function getPlaceholderTemplate(): string
+    {
+        // TODO: Implement getPlaceholderTemplate() method.
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function getValueOf(string $placeholder)
     {
         if (isset($this->BoundValues[$placeholder])) return $this->BoundValues[$placeholder];
@@ -305,7 +313,7 @@ class MySQLParser implements ISQLParser
     /**
      * @inheritDoc
      */
-    public function insert(string $table, array $data): string
+    public function insert(string $table, array $data, bool $usePlaceholders = false): string
     {
         // TODO: Implement insert() method.
     }
@@ -428,7 +436,15 @@ class MySQLParser implements ISQLParser
     /**
      * @inheritDoc
      */
-    public function update(string $table, array $data, array $where = []): string
+    public function setPlaceholderTemplate(string $template): void
+    {
+        // TODO: Implement setPlaceholderTemplate() method.
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function update(string $table, array $data, array $where = [], bool $usePlaceholders = false): string
     {
         // TODO: Implement update() method.
     }
