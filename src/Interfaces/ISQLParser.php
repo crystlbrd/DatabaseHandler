@@ -13,9 +13,9 @@ interface ISQLParser
     /**
      * Gets the value of a specific placeholder
      * @param string $placeholder Placeholder
-     * @return null|string Value
+     * @return null|mixed Value
      */
-    public function getValueOf(string $placeholder): ?string;
+    public function getValueOf(string $placeholder);
 
     /**
      * Generates an INSERT query

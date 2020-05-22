@@ -31,7 +31,7 @@ class MySQLParser implements ISQLParser
     public const ALIAS_SEPARATOR = '__as__';
 
 
-    public function bindValue(string $value, string $placeholder)
+    public function bindValue($value, string $placeholder): void
     {
         $this->BoundValues[$placeholder] = $value;
     }
@@ -71,7 +71,7 @@ class MySQLParser implements ISQLParser
     /**
      * @inheritDoc
      */
-    public function getValueOf(string $placeholder): ?string
+    public function getValueOf(string $placeholder)
     {
         if (isset($this->BoundValues[$placeholder])) return $this->BoundValues[$placeholder];
         return null;
