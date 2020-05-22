@@ -11,6 +11,12 @@ interface ISQLParser
     public function getValues(): array;
 
     /**
+     * Gets the next available placeholder
+     * @return string
+     */
+    public function getPlaceholder(): string;
+
+    /**
      * Gets the current template for naming placeholders
      * @return string
      */
