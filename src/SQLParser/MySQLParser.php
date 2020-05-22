@@ -6,6 +6,7 @@ namespace crystlbrd\DatabaseHandler\SQLParser;
 
 use crystlbrd\DatabaseHandler\Exceptions\ConnectionException;
 use crystlbrd\DatabaseHandler\Exceptions\ParserException;
+use crystlbrd\DatabaseHandler\Interfaces\IConnection;
 use crystlbrd\DatabaseHandler\Interfaces\ISQLParser;
 
 class MySQLParser implements ISQLParser
@@ -58,11 +59,33 @@ class MySQLParser implements ISQLParser
     }
 
     /**
-     * @inheritDoc
+     * Translates the JOIN type int into the corresponding SQL part
+     * @param int $type JOIN type defined in IConnection
+     * @return string
+     * @throws ParserException
      */
-    public function getValues(): array
+    public function getJoinType(int $type): string
     {
-        return $this->BoundValues;
+        switch ($type) {
+            case IConnection::JOIN_INNER:
+                return 'INNER JOIN';
+                break;
+            case IConnection::JOIN_LEFT:
+                return 'LEFT JOIN';
+                break;
+            case IConnection::JOIN_RIGHT:
+                return 'RIGHT JOIN';
+                break;
+            case IConnection::JOIN_FULL:
+                return 'FULL JOIN';
+                break;
+            case IConnection::JOIN_CROSS:
+                return 'CROSS JOIN';
+                break;
+            default:
+                throw new ParserException('Invalid join type!', ParserException::EXCP_CODE_INVALID_ARGUMENT);
+                break;
+        }
     }
 
     /**
@@ -88,6 +111,14 @@ class MySQLParser implements ISQLParser
     {
         if (isset($this->BoundValues[$placeholder])) return $this->BoundValues[$placeholder];
         return null;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getValues(): array
+    {
+        return $this->BoundValues;
     }
 
     /**
@@ -229,22 +260,60 @@ class MySQLParser implements ISQLParser
 
     /**
      * Generates the table selection query (FROM ...)
-     * @param array $tables Tables to select
+     * @param string|array $tables Tables to select
      * @return string Table selection query
      * @throws ParserException
      */
-    public function generateTableSelection(array $tables): string
+    public function generateTableSelection($tables): string
     {
         // define string
         $sql = '';
 
         // check type
-        if (is_string($tables)) {
+        if (empty($tables)) {
+            throw new ParserException('Empty tables selector!', ParserException::EXCP_CODE_INVALID_ARGUMENT);
+        } else if (is_string($tables)) {
             // one single table
             $sql .= $tables;
         } else if (is_array($tables)) {
-            # TODO: Implement support for multiple table selection
-            throw new ParserException('Selecting from multiple tables is currently not supported!', ParserException::EXCP_CODE_UNSUPPORTED_FEATURE);
+            $i = 0;
+            foreach ($tables as $key => $val) {
+                if (is_int($key) && is_string($val)) {
+                    // simple multi table selection
+                    $sql .= ($i ? ', ' : '') . $val;
+                } else if (is_string($key) && is_array($val)) {
+                    // joining
+                    $table = $key;
+                    $sql .= ($i ? ', ' : '') . $table;
+
+                    foreach ($val as $joinType => $joinTables) {
+                        if (is_int($joinType) && is_array($joinTables)) {
+                            foreach ($joinTables as $joinTable => $on) {
+                                if (is_string($joinTable) && is_array($on)) {
+                                    $sql .= ' ' . $this->getJoinType($joinType) . ' ' . $joinTable . ' ON ';
+
+                                    $o = 0;
+                                    foreach ($on as $aTableCol => $bTableCol) {
+                                        if (is_string($aTableCol) && is_string($bTableCol)) {
+                                            $sql .= ($o ? ', ' : '') . $joinTable . '.' . $aTableCol . ' = ' . $table . '.' . $bTableCol;
+                                        } else {
+                                            throw new ParserException('Invalid joining on syntax!', ParserException::EXCP_CODE_INVALID_ARGUMENT);
+                                        }
+
+                                        $o++;
+                                    }
+                                } else {
+                                    throw new ParserException('Invalid joining table syntax!', ParserException::EXCP_CODE_INVALID_ARGUMENT);
+                                }
+                            }
+                        } else {
+                            throw new ParserException('Invalid joining syntax!', ParserException::EXCP_CODE_INVALID_ARGUMENT);
+                        }
+                    }
+                }
+
+                $i++;
+            }
         } else {
             // unsupported type: throw exception
             throw new ParserException('Expected string or array for $tables, ' . gettype($tables) . ' given', ParserException::EXCP_CODE_INVALID_ARGUMENT);
