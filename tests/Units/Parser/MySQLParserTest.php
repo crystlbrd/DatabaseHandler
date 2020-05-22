@@ -55,21 +55,21 @@ class MySQLParserTest extends TestCase
             self::assertSame($value, $this->Parser->getValueOf($placeholder));
 
             // the current count has to match the bound values
-            self::assertCount($i, $this->Parser->getBoundValues());
+            self::assertCount($i, $this->Parser->getValues());
 
             $i++;
         }
 
         // test the results
-        self::assertIsArray($this->Parser->getBoundValues());
-        self::assertSame($boundValues, $this->Parser->getBoundValues());
+        self::assertIsArray($this->Parser->getValues());
+        self::assertSame($boundValues, $this->Parser->getValues());
 
         // reset the bound values
         $this->Parser->resetPlaceholders();
 
         // there should not be any bound values
-        self::assertIsArray($this->Parser->getBoundValues());
-        self::assertCount(0, $this->Parser->getBoundValues());
+        self::assertIsArray($this->Parser->getValues());
+        self::assertCount(0, $this->Parser->getValues());
 
         // the placeholder generation should start again at 0
         self::assertSame(':param0', $this->Parser->getPlaceholder(':param'));
