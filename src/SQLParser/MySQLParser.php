@@ -16,6 +16,11 @@ class MySQLParser implements ISQLParser
     protected $BoundValues = [];
 
     /**
+     * @var int Current placeholder index
+     */
+    private $PlaceholderIndex = 0;
+
+    /**
      * Used to separate the table name from the column name in the alias
      */
     public const COLUMN_SEPARATOR = '__msqp__';
@@ -53,6 +58,14 @@ class MySQLParser implements ISQLParser
     public function getBoundValues(): array
     {
         return $this->BoundValues;
+    }
+
+    public function getPlaceholder(string $template): string
+    {
+        $placeholder = $template . $this->PlaceholderIndex;
+        $this->PlaceholderIndex++;
+
+        return $placeholder;
     }
 
     /**
@@ -251,7 +264,7 @@ class MySQLParser implements ISQLParser
 
                 if (is_string($column) && is_string($value)) {
                     // normal OR condition
-                    $sql .= $column . $this->parseValue($value, $detectValueType);
+                    $sql .= $column . $this->parseValue($value, $detectValueType, $usePlaceholders, $placeholderTemplate);
                 } else if (is_int($column) && is_array($value)) {
                     // injected AND condition
                     $sql .= $this->generateAndConditions($value, true, $detectValueType);
@@ -259,7 +272,7 @@ class MySQLParser implements ISQLParser
                     // multiple OR conditions on one column
                     $ii = 0;
                     foreach ($value as $val) {
-                        $sql .= ($ii != 0 ? ' OR ' : '') . $column . $this->parseValue($val, $detectValueType);
+                        $sql .= ($ii != 0 ? ' OR ' : '') . $column . $this->parseValue($val, $detectValueType, $usePlaceholders, $placeholderTemplate);
 
                         // append all AND conditions if any defined
                         if (isset($where['and'])) {
@@ -335,7 +348,7 @@ class MySQLParser implements ISQLParser
      * @param bool $detectValueTypes Detect the value type and add quotes accordingly?
      * @return string
      */
-    public function parseValue($value, bool $detectValueTypes = true): string
+    public function parseValue($value, bool $detectValueTypes = true, bool $usePlaceholder = false, string $placeholderTemplate = ':param'): string
     {
         $val = $value;
 
@@ -363,7 +376,19 @@ class MySQLParser implements ISQLParser
             $op = ' = ';
         }
 
-        return $op . ($detectValueTypes ? $this->detectType($val) : $val);
+        $val = ($detectValueTypes ? $this->detectType($val) : $val);
+        $val = ($usePlaceholder ? $this->bindValue($val, $this->getPlaceholder()) : $val);
+
+        return $op . $val;
+    }
+
+    public function resetPlaceholders(): void
+    {
+        // reset the index
+        $this->PlaceholderIndex = 0;
+
+        // delete all previous placeholders
+        $this->BoundValues = [];
     }
 
     /**
@@ -372,6 +397,9 @@ class MySQLParser implements ISQLParser
      */
     public function select(array $tables, array $columns = [], array $where = [], array $options = [], bool $usePlaceholders = false, string $placeholderTemplate = ':param'): string
     {
+        // reset the placeholders
+        if ($usePlaceholders) $this->resetPlaceholders();
+
         // SELECT
         $sql = 'SELECT';
 

@@ -35,9 +35,11 @@ interface ISQLParser
      * - order (array): ORDER BY
      * - group (array): GROUP BY
      * - limit (int|string): LIMIT
+     * @param bool $usePlaceholders Bind the values behind a placeholder (useful for binding values)
+     * @param string $placeholderTemplate Placeholder template
      * @return string SELECT query
      */
-    public function select(array $tables, array $columns = [], array $where = [], array $options = []): string;
+    public function select(array $tables, array $columns = [], array $where = [], array $options = [], bool $usePlaceholders = true, string $placeholderTemplate = ':param'): string;
 
     /**
      * Generates a UPDATE query
