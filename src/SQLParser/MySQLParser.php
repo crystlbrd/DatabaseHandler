@@ -21,6 +21,11 @@ class MySQLParser implements ISQLParser
     private $PlaceholderIndex = 0;
 
     /**
+     * @var string $PlaceholderTemplate Template for naming placeholders
+     */
+    private $PlaceholderTemplate = ':param';
+
+    /**
      * Used to separate the table name from the column name in the alias
      */
     public const COLUMN_SEPARATOR = '__msqp__';
@@ -60,12 +65,12 @@ class MySQLParser implements ISQLParser
         return $this->BoundValues;
     }
 
-    public function getPlaceholder(string $template): string
+    /**
+     * @inheritDoc
+     */
+    public function getPlaceholder(): string
     {
-        $placeholder = $template . $this->PlaceholderIndex;
-        $this->PlaceholderIndex++;
-
-        return $placeholder;
+        return $this->PlaceholderTemplate . $this->PlaceholderIndex++;
     }
 
     /**
@@ -73,7 +78,7 @@ class MySQLParser implements ISQLParser
      */
     public function getPlaceholderTemplate(): string
     {
-        // TODO: Implement getPlaceholderTemplate() method.
+        return $this->PlaceholderTemplate;
     }
 
     /**
@@ -403,7 +408,7 @@ class MySQLParser implements ISQLParser
      * @inheritDoc
      * @throws ParserException
      */
-    public function select(array $tables, array $columns = [], array $where = [], array $options = [], bool $usePlaceholders = false, string $placeholderTemplate = ':param'): string
+    public function select(array $tables, array $columns = [], array $where = [], array $options = [], bool $usePlaceholders = false): string
     {
         // reset the placeholders
         if ($usePlaceholders) $this->resetPlaceholders();
@@ -419,7 +424,7 @@ class MySQLParser implements ISQLParser
 
         // WHERE
         if (!empty($conditions)) {
-            $sql .= ' WHERE ' . $this->generateWhereConditions($conditions, !$usePlaceholders, $usePlaceholders, $placeholderTemplate) . ' ';
+            $sql .= ' WHERE ' . $this->generateWhereConditions($conditions, !$usePlaceholders, $usePlaceholders) . ' ';
         }
 
         // ADDITIONAL OPTIONS
@@ -438,7 +443,7 @@ class MySQLParser implements ISQLParser
      */
     public function setPlaceholderTemplate(string $template): void
     {
-        // TODO: Implement setPlaceholderTemplate() method.
+        $this->PlaceholderTemplate = $template;
     }
 
     /**
