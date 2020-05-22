@@ -22,27 +22,7 @@ class MySQLConnection extends PDOConnection
      */
     public function select($tables, array $columns, array $conditions = [], array $options = []): array
     {
-        // SELECT
-        $sql = 'SELECT';
-
-        // COLUMNS
-        $sql .= ' ' . $this->parseColumns($columns);
-
-        // FROM
-        $sql .= ' FROM ' . $this->parseTables($tables);
-
-        // WHERE
-        if (!empty($conditions)) {
-            $sql .= ' WHERE ' . $this->parseConditions($conditions) . ' ';
-        }
-
-        // ADDITIONAL OPTIONS
-        if (!empty($options)) {
-            $sql .= $this->parseOptions($options);
-        }
-
-        // adding end ;
-        $sql .= ';';
+        $sql = $this->SQLParser->select($tables, $columns, $conditions, $options, true);
 
         // execute SQL
         $result = $this->execute($sql);

@@ -667,7 +667,7 @@ abstract class PDOConnection implements IConnection
             $stm = $this->PDO->prepare($sql);
 
             // Bind all parameters
-            foreach ($this->Parameters as $index => $value) {
+            foreach ($this->SQLParser->getBoundValues() as $index => $value) {
                 if ($value == 'NULL') {
                     // special rule for NULL values
                     $stm->bindValue($index, null, PDO::PARAM_INT);
@@ -678,10 +678,6 @@ abstract class PDOConnection implements IConnection
                 // Replace parameter placeholder for internal cache
                 $sql = str_replace(' ' . $index . ' ', ($value == 'NULL' ? ' NULL ' : ' "' . $value . '" '), $sql);
             }
-
-            // reset parameter cache
-            $this->Parameters = [];
-            $this->ParameterIndex = 1;
 
             // Save query to cache
             $this->History[] = trim($sql);
