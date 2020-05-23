@@ -75,7 +75,7 @@ class MySQLParserTest extends TestCase
 
     /**
      * Tests the table selection generation with valid input
-     * @dataProvider \crystlbrd\DatabaseHandler\Tests\Datasets\Parser\MySQL::validTableSelectorsAndThereExpectedOutputs
+     * @dataProvider \crystlbrd\DatabaseHandler\Tests\Datasets\Parser\MySQL::validTableSelectorsAndThereExpectedOutputs()
      * @param $selector
      * @param string $expectedOutput
      * @throws ParserException
@@ -87,7 +87,7 @@ class MySQLParserTest extends TestCase
 
     /**
      * Tests the table selection generation with invalid input
-     * @dataProvider \crystlbrd\DatabaseHandler\Tests\Datasets\Parser\MySQL::invalidTableSelectors
+     * @dataProvider \crystlbrd\DatabaseHandler\Tests\Datasets\Parser\MySQL::invalidTableSelectors()
      * @param $selector
      */
     public function testTableSelectionGenerationWithInvalidInput($selector)
@@ -99,7 +99,7 @@ class MySQLParserTest extends TestCase
 
     /**
      * Tests column selection generation with valid input
-     * @dataProvider \crystlbrd\DatabaseHandler\Tests\Datasets\Parser\MySQL::validColumnSelectorsAndThereExpectedOutputs
+     * @dataProvider \crystlbrd\DatabaseHandler\Tests\Datasets\Parser\MySQL::validColumnSelectorsAndThereExpectedOutputs()
      * @param array $columnsSelector
      * @param string $expectedOutput
      * @throws ParserException
@@ -111,7 +111,7 @@ class MySQLParserTest extends TestCase
 
     /**
      * Tests WHERE conditions building
-     * @dataProvider \crystlbrd\DatabaseHandler\Tests\Datasets\Parser\MySQL::validWhereConditionsAndThereExpectedOutputs
+     * @dataProvider \crystlbrd\DatabaseHandler\Tests\Datasets\Parser\MySQL::validWhereConditionsAndThereExpectedOutputs()
      * @param array $conditions
      * @param string $expectedOutputWithValueDetection
      * @param $expectedOutputWithPlaceholders
@@ -123,7 +123,26 @@ class MySQLParserTest extends TestCase
     }
 
     /**
-     * @dataProvider \crystlbrd\DatabaseHandler\Tests\Datasets\Parser\MySQL::validValuesWithExpectedOutputs
+     * Tests operation generation
+     * @dataProvider \crystlbrd\DatabaseHandler\Tests\Datasets\Parser\MySQL::validOptionsWithExpectedOutputs()
+     * @param array $options
+     * @param string $expectedOutput
+     * @throws ParserException
+     */
+    public function testOptionGeneration(array $options, string $expectedOutput)
+    {
+        self::assertSame($expectedOutput, $this->Parser->generateOptions($options));
+    }
+
+    public function testSelect()
+    {
+        # todo
+        self::markTestIncomplete();
+    }
+
+    /**
+     * Tests value and operator parsing
+     * @dataProvider \crystlbrd\DatabaseHandler\Tests\Datasets\Parser\MySQL::validValuesWithExpectedOutputs()
      * @param $value
      * @param $expectedOutputWithValueDetection
      * @param $expectedOutputWithPlaceholders

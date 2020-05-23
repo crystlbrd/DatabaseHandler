@@ -375,4 +375,94 @@ class MySQL
             ]
         ];
     }
+
+    public function validOptionsWithExpectedOutputs(): array
+    {
+        return [
+            'empty array' => [
+                [],
+                ''
+            ],
+            'ORDER BY one column (without asc parameter)' => [
+                [
+                    'order' => 'col'
+                ],
+                ' ORDER BY col ASC'
+            ],
+            'ORDER BY one column (with asc parameter)' => [
+                [
+                    'order' => [
+                        'col' => 'asc'
+                    ]
+                ],
+                ' ORDER BY col ASC'
+            ],
+            'ORDER BY one column (desc)' => [
+                [
+                    'order' => [
+                        'col' => 'desc'
+                    ]
+                ],
+                ' ORDER BY col DESC'
+            ],
+            'ORDER BY multiple columns' => [
+                [
+                    'order' => [
+                        'col1',
+                        'col2' => 'asc',
+                        'col3' => 'desc'
+                    ]
+                ],
+                ' ORDER BY col1 ASC, col2 ASC, col3 DESC'
+            ],
+            'GROUP BY one column (string syntax)' => [
+                ['group' => 'col'],
+                ' GROUP BY col'
+            ],
+            'GROUP BY one column (array syntax)' => [
+                [
+                    'group' => [
+                        'col'
+                    ]
+                ],
+                ' GROUP BY col'
+            ],
+            'GROUP BY multiple columns' => [
+                [
+                    'group' => [
+                        'col1',
+                        'col2'
+                    ]
+                ],
+                ' GROUP BY col1, col2'
+            ],
+            'LIMIT (int syntax)' => [
+                [
+                    'limit' => 5
+                ],
+                ' LIMIT 5'
+            ],
+            'LIMIT (string syntax)' => [
+                [
+                    'limit' => '1, 23'
+                ],
+                ' LIMIT 1, 23'
+            ],
+            'all combined' => [
+                [
+                    'limit' => 10,
+                    'order' => [
+                        'col1',
+                        'col2' => 'ASC',
+                        'col3' => 'DESC'
+                    ],
+                    'group' => [
+                        'col1',
+                        'col2'
+                    ]
+                ],
+                ' GROUP BY col1, col2 ORDER BY col1 ASC, col2 ASC, col3 DESC LIMIT 10'
+            ]
+        ];
+    }
 }

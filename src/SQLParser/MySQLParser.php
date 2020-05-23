@@ -206,8 +206,17 @@ class MySQLParser implements ISQLParser
         /// OPTIONS
 
         // Group by
-        if (isset($options['group'])) {
-            $sql .= ' GROUP BY ' . $options['group'];
+        if (!empty($options['group'])) {
+            if (is_array($options['group'])) {
+                $sql .= ' GROUP BY';
+                $i = 0;
+                foreach ($options['group'] as $col) {
+                    $sql .= ($i ? ', ' : ' ') . $col;
+                    $i++;
+                }
+            } else {
+                $sql .= ' GROUP BY ' . $options['group'];
+            }
         }
 
         // Order by
@@ -225,17 +234,19 @@ class MySQLParser implements ISQLParser
                     $sql .= ($i != 0 ? ', ' : '');
 
                     // the column
-                    $sql .= $column;
+                    $sql .= is_string($column) ? $column : $type;
 
                     // sorting type
-                    $sql .= ($type == 'desc' ? ' DESC' : '');
+                    $sql .= (strtolower($type) == 'desc' ? ' DESC' : ' ASC');
 
                     // count up
                     $i++;
                 }
+            } else if (is_string($options['order'])) {
+                $sql = ' ORDER BY ' . $options['order'] . ' ASC';
             } else {
                 // throw exception
-                throw new ParserException('Option "order" expected to be an array, ' . gettype($options['order']) . ' given', ParserException::EXCP_CODE_INVALID_ARGUMENT);
+                throw new ParserException('Option "order" expected to be an array or string, ' . gettype($options['order']) . ' given', ParserException::EXCP_CODE_INVALID_ARGUMENT);
             }
         }
 
@@ -477,8 +488,7 @@ class MySQLParser implements ISQLParser
      * @inheritDoc
      * @throws ParserException
      */
-    public
-    function select(array $tables, array $columns = [], array $where = [], array $options = [], bool $usePlaceholders = false): string
+    public function select(array $tables, array $columns = [], array $where = [], array $options = [], bool $usePlaceholders = false): string
     {
         // reset the placeholders
         if ($usePlaceholders) $this->resetPlaceholders();
@@ -494,7 +504,7 @@ class MySQLParser implements ISQLParser
 
         // WHERE
         if (!empty($conditions)) {
-            $sql .= ' WHERE ' . $this->generateWhereConditions($conditions, !$usePlaceholders, $usePlaceholders) . ' ';
+            $sql .= ' WHERE ' . $this->generateWhereConditions($conditions, $usePlaceholders) . ' ';
         }
 
         // ADDITIONAL OPTIONS
@@ -511,8 +521,7 @@ class MySQLParser implements ISQLParser
     /**
      * @inheritDoc
      */
-    public
-    function setPlaceholderTemplate(string $template): void
+    public function setPlaceholderTemplate(string $template): void
     {
         $this->PlaceholderTemplate = $template;
     }
@@ -520,8 +529,7 @@ class MySQLParser implements ISQLParser
     /**
      * @inheritDoc
      */
-    public
-    function update(string $table, array $data, array $where = [], bool $usePlaceholders = false): string
+    public function update(string $table, array $data, array $where = [], bool $usePlaceholders = false): string
     {
         // TODO: Implement update() method.
     }
