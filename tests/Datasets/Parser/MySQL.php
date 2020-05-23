@@ -465,4 +465,102 @@ class MySQL
             ]
         ];
     }
+
+    public function validSelectParametersAndExpectedOutputs(): array
+    {
+        return [
+            'simple select' => [
+                'table',
+                [],
+                [],
+                [],
+                'SELECT * FROM table;',
+                'SELECT * FROM table;'
+            ],
+            'simple AND-combined conditions' => [
+                ['table'],
+                ['col1', 'col2'],
+                [
+                    'col1' => 'a',
+                    'col2' => 2
+                ],
+                [],
+                'SELECT col1, col2 FROM table WHERE col1 = "a" AND col2 = 2;',
+                'SELECT col1, col2 FROM table WHERE col1 = :param0 AND col2 = 2;'
+            ],
+            'extended AND-combined conditions' => [
+                ['table1'],
+                ['table1.col1', 'table1.col2'],
+                [
+                    'and' => [
+                        'table1.col1' => ['val1.1', 'val1.2'],
+                        'table1.col2' => 'val2'
+                    ]
+                ],
+                [],
+                '',
+                ''
+            ],
+            'simple OR-combined conditions' => [
+                ['table1'],
+                ['table1.col1', 'table1.col2'],
+                [
+                    'or' => [
+                        'table1.col1' => 'val1',
+                        'table1.col2' => 'val2'
+                    ]
+                ],
+                [],
+                '',
+                ''
+            ],
+            'extended OR-combined conditions' => [
+                ['table1'],
+                ['table1.col1', 'table1.col2'],
+                [
+                    'or' => [
+                        'table1.col1' => ['val1.1', 'val1.2'],
+                        ['table1.col1' => 'val2.1', 'table1.col2' => 'val2.1'],
+                        ['table1.col1' => 'val3.1', 'table1.col2' => ['val3.2', 'val3.3']]
+                    ]
+                ],
+                [],
+                '',
+                ''
+            ],
+            'combined conditions' => [
+                ['table1'],
+                ['table1.col1', 'table1.col2'],
+                [
+                    'and' => [
+                        'table1.col1' => 'val1',
+                        'table1.col2' => ['val2.1', 'val2.2'],
+                    ],
+                    'or' => [
+                        'table1.col1' => 'val3',
+                        'table1.col2' => ['val4.1', 'val4.2'],
+                        ['table1.col1' => 'val5.1', 'table1.col2' => 'val5.2'],
+                        ['table1.col1' => 'val6.1', 'table1.col2' => ['val6.2', 'val6.3']]
+                    ]
+                ],
+                [],
+                '',
+                ''
+            ],
+            'with options' => [
+                ['table1'],
+                ['table1.col1', 'table1.col2'],
+                [],
+                [
+                    'group' => 'table1.col1',
+                    'order' => [
+                        'table1.col1' => 'asc',
+                        'table1.col2' => 'desc'
+                    ]
+                ],
+                '',
+                ''
+            ]
+        ];
+    }
 }

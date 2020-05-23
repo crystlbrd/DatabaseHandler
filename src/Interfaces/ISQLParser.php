@@ -45,7 +45,7 @@ interface ISQLParser
 
     /**
      * Generates a SELECT query
-     * @param array $tables Tables to select from
+     * @param string|array $tables Tables to select from
      * @param array $columns Columns to select
      * @param array $where WHERE conditions
      * @param array $options Additional options
@@ -56,7 +56,7 @@ interface ISQLParser
      * @param bool $usePlaceholders Replace the value with a placeholder (useful for binding values)
      * @return string SELECT query
      */
-    public function select(array $tables, array $columns = [], array $where = [], array $options = [], bool $usePlaceholders = false): string;
+    public function select($tables, array $columns = [], array $where = [], array $options = [], bool $usePlaceholders = false): string;
 
     /**
      * Defines the template to use for naming placeholders

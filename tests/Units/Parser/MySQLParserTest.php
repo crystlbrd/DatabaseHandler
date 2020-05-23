@@ -134,10 +134,21 @@ class MySQLParserTest extends TestCase
         self::assertSame($expectedOutput, $this->Parser->generateOptions($options));
     }
 
-    public function testSelect()
+    /**
+     * Tests SELECT query generation
+     * @dataProvider \crystlbrd\DatabaseHandler\Tests\Datasets\Parser\MySQL::validSelectParametersAndExpectedOutputs()
+     * @param $tables
+     * @param array $columns
+     * @param array $where
+     * @param array $options
+     * @param string $expectedOutputWithValueDetection
+     * @param string $expectedOutputWithPlaceholders
+     * @throws ParserException
+     */
+    public function testSelect($tables, array $columns, array $where, array $options, string $expectedOutputWithValueDetection, string $expectedOutputWithPlaceholders)
     {
-        # todo
-        self::markTestIncomplete();
+        self::assertSame($expectedOutputWithValueDetection, $this->Parser->select($tables, $columns, $where, $options, false));
+        self::assertSame($expectedOutputWithPlaceholders, $this->Parser->select($tables, $columns, $where, $options, true));
     }
 
     /**

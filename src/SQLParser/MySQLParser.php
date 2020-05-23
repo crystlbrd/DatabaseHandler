@@ -488,7 +488,7 @@ class MySQLParser implements ISQLParser
      * @inheritDoc
      * @throws ParserException
      */
-    public function select(array $tables, array $columns = [], array $where = [], array $options = [], bool $usePlaceholders = false): string
+    public function select($tables, array $columns = [], array $where = [], array $options = [], bool $usePlaceholders = false): string
     {
         // reset the placeholders
         if ($usePlaceholders) $this->resetPlaceholders();
