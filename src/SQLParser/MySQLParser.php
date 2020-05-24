@@ -503,8 +503,8 @@ class MySQLParser implements ISQLParser
         $sql .= ' FROM ' . $this->generateTableSelection($tables);
 
         // WHERE
-        if (!empty($conditions)) {
-            $sql .= ' WHERE ' . $this->generateWhereConditions($conditions, $usePlaceholders) . ' ';
+        if (!empty($where)) {
+            $sql .= ' WHERE ' . $this->generateWhereConditions($where, $usePlaceholders) . ' ';
         }
 
         // ADDITIONAL OPTIONS
