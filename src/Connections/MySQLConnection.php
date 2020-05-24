@@ -22,6 +22,7 @@ class MySQLConnection extends PDOConnection
      */
     public function select($tables, array $columns, array $conditions = [], array $options = []): array
     {
+        // generate SQL
         $sql = $this->SQLParser->select($tables, $columns, $conditions, $options, true);
 
         // execute SQL
