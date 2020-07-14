@@ -5,6 +5,7 @@ namespace crystlbrd\DatabaseHandler\Connections;
 use crystlbrd\DatabaseHandler\Exceptions\ConnectionException;
 use crystlbrd\DatabaseHandler\Interfaces\IConnection;
 use crystlbrd\DatabaseHandler\Interfaces\ISQLParser;
+use crystlbrd\Values\ArrVal;
 use PDO;
 use PDOException;
 use PDOStatement;
@@ -100,23 +101,23 @@ abstract class PDOConnection implements IConnection
         $this->Name = $name;
 
         // save options and defaults
-        $this->Options = array_merge([
+        $this->Options = ArrVal::merge([
             'encoding' => 'utf8mb4',
             'port' => 3306
         ], $options);
 
         // Driver (required)
-        if (!isset($this->Options['driver']) || !is_string($this->Options['driver'])) {
-            throw new ConnectionException('No driver defined!', ConnectionException::EXCP_CODE_DRIVER_UNDEFINED);
-        } else {
+        if (isset($this->Options['driver']) && is_string($this->Options['driver'])) {
             $this->Driver = $this->Options['driver'];
+        } else {
+            throw new ConnectionException('No driver defined!', ConnectionException::EXCP_CODE_DRIVER_UNDEFINED);
         }
 
         // SQLParser (required)
-        if (!isset($this->Options['parser']) || !($this->Options['driver'] instanceof ISQLParser)) {
-            throw new ConnectionException('Missing valid SQL parser!', ConnectionException::EXCP_CODE_INVALID_PARSER);
-        } else {
+        if (isset($this->Options['parser']) && $this->Options['parser'] instanceof ISQLParser) {
             $this->SQLParser = $this->Options['parser'];
+        } else {
+            throw new ConnectionException('Missing valid SQL parser!', ConnectionException::EXCP_CODE_INVALID_PARSER);
         }
     }
 

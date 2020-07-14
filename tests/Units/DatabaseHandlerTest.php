@@ -3,113 +3,64 @@
 
 namespace crystlbrd\DatabaseHandler\Tests\Units;
 
-
-use crystlbrd\DatabaseHandler\DatabaseHandler;
-use crystlbrd\DatabaseHandler\Exceptions\DatabaseHandlerException;
-use crystlbrd\DatabaseHandler\Interfaces\IConnection;
 use crystlbrd\DatabaseHandler\Table;
-use crystlbrd\DatabaseHandler\Tests\Helper\TestCases\DatabaseTestCase;
+use PHPUnit\Framework\TestCase;
+use crystlbrd\DatabaseHandler\DatabaseHandler;
+use crystlbrd\DatabaseHandler\Connections\MySQLConnection;
 
-class DatabaseHandlerTest extends DatabaseTestCase
+class DatabaseHandlerTest extends TestCase
 {
-    public function testAddConnection(): DatabaseHandler
+    protected function getMysqlConnectionStub()
     {
-        // Init DatabaseHandler
-        $dbh = new DatabaseHandler();
+        $conn = $this->createStub(MySQLConnection::class);
+        $conn->method('openConnection')->willReturn(true);
 
-        // add new connection
-        self::assertTrue($dbh->addConnection('default', $this->DefaultConnection));
-
-        // test if connection exists
-        self::assertTrue($dbh->connectionExists('default'));
-
-        // try to add the connection again
-        self::assertFalse($dbh->addConnection('default', $this->DefaultConnection));
-
-        // get connection
-        $activeConn = $dbh->getActiveConnection();
-        $conn = $dbh->getConnection('default');
-
-        self::assertSame($activeConn, $conn);
-
-        self::assertNotFalse($conn);
-        self::assertInstanceOf(IConnection::class, $conn);
-        self::assertSame($this->DefaultConnection, $conn);
-
-        return $dbh;
+        return $conn;
     }
 
     /**
-     * @param DatabaseHandler $dbh
-     * @author crystlbrd
-     * @depends testAddConnection
+     * Tests, if it's possible to add and access a MySQLConnection to the DatabaseHandler
+     * @throws \crystlbrd\DatabaseHandler\Exceptions\DatabaseHandlerException
      */
-    public function testRemoveConnection(DatabaseHandler $dbh): void
+    public function testAddMysqlConnection()
     {
-        // check, if the connection exists
-        self::assertTrue($dbh->connectionExists('default'));
+        // define connection
+        $MySQLConnection = $this->getMysqlConnectionStub();
 
-        // remove connection
-        self::assertTrue($dbh->removeConnection('default'));
-
-        // check for connection
-        self::assertFalse($dbh->connectionExists('default'));
-
-        // try to remove it again
-        self::assertFalse($dbh->removeConnection('default'));
-    }
-
-    /**
-     * @throws DatabaseHandlerException
-     * @author crystlbrd
-     */
-    public function testLoad()
-    {
-        // init
+        // init DBH
         $dbh = new DatabaseHandler();
 
         // add connection
-        $dbh->addConnection('test', $this->DefaultConnection);
+        $dbh->addConnection('mysql', $MySQLConnection);
 
-        // try to load a table
-        $table1 = $dbh->load('table1');
-        self::assertInstanceOf(Table::class, $table1);
-
-        // try to load another table
-        $table2 = $dbh->load('table2');
-        self::assertInstanceOf(Table::class, $table2);
-    }
-
-    public function testDeleteTable()
-    {
-        // init DatabaseHandler
-        $dbh = new DatabaseHandler();
-
-        // add a connection
-        $dbh->addConnection('test', $this->DefaultConnection);
-
-        // try to delete a table
-        self::assertTrue($dbh->deleteTable('table_b'), json_encode($dbh->getLastError()));
-
-        // check, if the table actually is deleted
-        $sql = '
-        SELECT table_name
-        FROM information_schema.tables
-        WHERE table_schema = "' . $_ENV['db_name'] . '" 
-            AND table_name = "table_b"
-        LIMIT 1;';
-
-        $res = $dbh->getActiveConnection()->query($sql);
-        self::assertNotFalse($res);
-        self::assertCount(0, $res->fetchAll());
+        // test, if it's available
+        self::assertTrue($dbh->connectionExists('mysql'));
+        self::assertSame($MySQLConnection, $dbh->getConnection('mysql'));
     }
 
     /**
-     * Tests the deleteDatabase method
+     * Test, if the DatabaseHandler behaves correctly, if you try to access a connection, that isn't defined
      */
-    public function testDeleteDatabase()
+    public function testAccessingNotExistingConnection()
     {
-        # TODO
-        self::markTestIncomplete();
+        $dbh = new DatabaseHandler();
+
+        self::assertFalse($dbh->connectionExists('connection'));
+        self::assertNull($dbh->getConnection('connection'));
+    }
+
+    public function testLoadingATable()
+    {
+        // init dbh
+        $dbh = new DatabaseHandler();
+
+        // add connection
+        $dbh->addConnection('mysql', $this->getMysqlConnectionStub());
+
+        // load table
+        $table = $dbh->load('table');
+
+        // test interface
+        self::assertInstanceOf(Table::class, $table);
     }
 }

@@ -5,11 +5,23 @@ namespace crystlbrd\DatabaseHandler\Connections;
 use crystlbrd\DatabaseHandler\Exceptions\ConnectionException;
 use crystlbrd\DatabaseHandler\Exceptions\ParserException;
 use crystlbrd\DatabaseHandler\Parser\PDOParser;
+use crystlbrd\DatabaseHandler\SQLParser\MySQLParser;
+use crystlbrd\Values\ArrVal;
 use Exception;
 use PDO;
 
 class MySQLConnection extends PDOConnection
 {
+    public function __construct(string $host, string $user, string $pass, string $name, array $options = [])
+    {
+        $opt = ArrVal::merge([
+            'driver' => 'mysql',
+            'parser' => new MySQLParser()
+        ], $options);
+
+        parent::__construct($host, $user, $pass, $name, $opt);
+    }
+
     /**
      * Selects rows from a table
      * @param string|array $tables one or more table names
