@@ -292,6 +292,8 @@ abstract class PDOConnection implements IConnection
         $index = array_search($value, $this->Parameters, true);
         if ($index !== false) {
             return $index;
+        } else if (is_int($value) || is_float($value)) {
+            return $value;
         } else {
             // get the next parameter index and count up
             $index = ':param' . $this->ParameterIndex++;
@@ -328,7 +330,7 @@ abstract class PDOConnection implements IConnection
 
     /**
      * Splits operator and actual value
-     * @param string $value The value mixed with the operator
+     * @param mixed $value The value mixed with the operator
      * @return string
      */
     protected function parseValue($value): string
